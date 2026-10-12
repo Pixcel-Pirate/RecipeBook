@@ -1,1 +1,1 @@
-First release: paste or open recipes, check them over, keep a searchable library, and export it as JSON or Markdown.
+New: a week planner and a shopping list. Plan meals by day, scale servings, and get one combined list sorted by aisle that you can tick off as you shop.
