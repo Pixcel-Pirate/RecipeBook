@@ -26,7 +26,7 @@
     "binaryName": "RecipeImporter",
     "resourcesPath": "/resources/",
     "extensionsPath": "/extensions/",
-    "binaryVersion": "nightly",
-    "clientVersion": "nightly"
+    "binaryVersion": "6.10.0",
+    "clientVersion": "6.10.0"
   }
 }

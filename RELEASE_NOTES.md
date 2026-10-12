@@ -1,1 +1,1 @@
-New: a week planner and a shopping list. Plan meals by day, scale servings, and get one combined list sorted by aisle that you can tick off as you shop.
+Security fixes: shared recipe files can no longer crash the app, and the desktop runtime is pinned to Neutralino 6.10.0 instead of a nightly build.

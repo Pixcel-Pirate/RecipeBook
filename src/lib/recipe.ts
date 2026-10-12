@@ -189,12 +189,29 @@ export function parseHtml(html: string, url = ""): Recipe | null {
 /** Recipes exported from this app (or the Recipe Book spec): one object or an array. */
 export function parseJson(raw: string): Recipe[] {
   const data = JSON.parse(raw);
-  return ([] as Json[]).concat(data).filter((d) => d && typeof d === "object" && d.title).map((d) => {
-    const r = { ...blankRecipe(), ...d } as Recipe;
-    r.ingredients = (d.ingredients ?? []).map((i: Json) => (typeof i === "string" ? parseIngredient(i) : { amount: String(i.amount ?? ""), unit: i.unit ?? "", name: i.name ?? "" }));
-    r.instructions = ([] as Json[]).concat(d.instructions ?? []).map(String);
-    r.tags = (d.tags ?? []).map(String);
-    return r;
+  // Shared files are untrusted: coerce every field to its type, or one bad value would crash the app on every start.
+  const str = (v: Json) => (typeof v === "string" ? v : typeof v === "number" ? String(v) : "");
+  const num = (v: Json) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : 0);
+  const list = (v: Json): Json[] => (Array.isArray(v) ? v : v == null ? [] : [v]);
+  return ([] as Json[]).concat(data).filter((d) => d && typeof d === "object" && str(d.title).trim()).map((d) => {
+    const b = blankRecipe();
+    return {
+      ...b,
+      id: str(d.id) || b.id,
+      title: str(d.title).trim(),
+      source: str(d.source),
+      ingredients: list(d.ingredients).map((i) => (typeof i === "string" ? parseIngredient(i) : { amount: str(i?.amount), unit: str(i?.unit), name: str(i?.name) })).filter((i) => i.name || i.amount),
+      instructions: list(d.instructions).map(str).filter(Boolean),
+      prepTime: num(d.prepTime),
+      cookTime: num(d.cookTime),
+      servings: num(d.servings),
+      tags: list(d.tags).map(str).filter(Boolean),
+      notes: str(d.notes),
+      image: str(d.image),
+      favorite: d.favorite === true,
+      createdAt: str(d.createdAt) || b.createdAt,
+      updatedAt: str(d.updatedAt) || b.updatedAt,
+    };
   });
 }
 

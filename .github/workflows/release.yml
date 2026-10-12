@@ -38,7 +38,7 @@ jobs:
           mkdir -p /tmp/neu/resources && cd /tmp/neu
           cp $GITHUB_WORKSPACE/desktop-lite/neutralino.config.json .
           cp -r $GITHUB_WORKSPACE/dist/. resources/ && cp $GITHUB_WORKSPACE/public/icon-512.png resources/icon.png
-          npx -y @neutralinojs/neu@11 update && npx -y @neutralinojs/neu@11 build --release
+          npx -y @neutralinojs/neu@11.8.0 update && npx -y @neutralinojs/neu@11.8.0 build --release
           mkdir /tmp/inst && cd /tmp/inst
           cp /tmp/neu/dist/RecipeImporter/RecipeImporter-win_x64.exe RecipeImporter.exe
           cp /tmp/neu/dist/RecipeImporter/resources.neu .

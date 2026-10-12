@@ -66,6 +66,17 @@ assert.equal(back.length, 2);
 assert.deepEqual(back[0].ingredients, pasted.ingredients);
 assert.match(toMarkdown(page), /## Easy Chili & Beans[\s\S]*- 1 lb ground beef[\s\S]*2\. Add beans/);
 
+// A hostile or broken shared file must not put bad types into the library (it would crash every start).
+const [hostile] = parseAny(JSON.stringify([{ title: "Bad", ingredients: [null, 5, { name: { x: 1 } }, "1 cup rice"], instructions: "Stir.", tags: [{}, "ok"], servings: "lots", notes: { a: 1 }, favorite: "yes" }, { title: { a: 1 } }]));
+assert.equal(hostile.title, "Bad");
+assert.deepEqual(hostile.ingredients, [{ amount: "1", unit: "cup", name: "rice" }]);
+assert.deepEqual(hostile.instructions, ["Stir."]);
+assert.deepEqual(hostile.tags, ["ok"]);
+assert.equal(hostile.servings, 0);
+assert.equal(hostile.notes, "");
+assert.equal(hostile.favorite, false);
+assert.equal(parseAny(JSON.stringify({ title: { a: 1 } }))[0].title, '{"title":{"a":1}}', "untitled object falls back to text parsing");
+
 console.log("parser checks passed");
 
 // ---- planner, scaling and shopping list
