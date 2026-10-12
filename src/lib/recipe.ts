@@ -30,6 +30,7 @@ const UNITS: Record<string, string> = {
   ml: "ml", milliliter: "ml", milliliters: "ml", l: "l", liter: "l", liters: "l",
   pint: "pint", pints: "pints", quart: "quart", quarts: "quarts", gallon: "gallon", gallons: "gallons",
   pinch: "pinch", dash: "dash", clove: "clove", cloves: "cloves", can: "can", cans: "cans",
+  packet: "packet", packets: "packets", jar: "jar", jars: "jars", bottle: "bottle", bottles: "bottles", bunch: "bunch",
   stick: "stick", sticks: "sticks", slice: "slice", slices: "slices", package: "package", packages: "packages", pkg: "package",
 };
 
@@ -48,8 +49,10 @@ export function parseIngredient(line: string): Ingredient {
   const m = s.match(AMOUNT);
   const amount = m ? m[1].replace(/\s*(?:–|to)\s*/, "-") : "";
   if (m) s = s.slice(m[0].length);
-  const um = s.match(/^([a-zA-Z]+)\.?(?=\s|$)/);
   let unit = "";
+  const floz = amount ? s.match(/^(?:fl\.?\s*oz\.?|fluid\s+ounces?)(?=\s|$)/i) : null;
+  if (floz) return { amount, unit: "fl oz", name: clean(s.slice(floz[0].length).replace(/^of\s+/i, "")) };
+  const um = s.match(/^([a-zA-Z]+)\.?(?=\s|$)/);
   if (um && amount) {
     const key = UNITS[um[1]] ? um[1] : um[1].toLowerCase();
     // Single-letter T / t / c only count as units when written that way exactly.
@@ -91,16 +94,18 @@ const HEAD = {
 /** Plain pasted text: a title line, then Ingredients / Instructions sections (or a best guess without headings). */
 export function parseText(text: string): Recipe {
   const r = blankRecipe();
+  text = text.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
   const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   let section: "head" | "ingredients" | "instructions" | "notes" = "head";
+  let headings = false;
   const loose: string[] = [];
   const notes: string[] = [];
 
   for (const line of lines) {
     const label = line.replace(/[:\s]+$/, "");
-    if (HEAD.ingredients.test(label)) { section = "ingredients"; continue; }
-    if (HEAD.instructions.test(label)) { section = "instructions"; continue; }
-    if (HEAD.notes.test(label)) { section = "notes"; continue; }
+    if (HEAD.ingredients.test(label)) { section = "ingredients"; headings = true; continue; }
+    if (HEAD.instructions.test(label)) { section = "instructions"; headings = true; continue; }
+    if (HEAD.notes.test(label)) { section = "notes"; headings = true; continue; }
 
     let m: RegExpMatchArray | null;
     if ((m = line.match(/^(?:serves|servings|yield|yields|makes)\s*:?\s*(\d+)/i))) { r.servings = Number(m[1]); continue; }
@@ -119,13 +124,15 @@ export function parseText(text: string): Recipe {
     else notes.push(line);
   }
 
+  // With headings, text under the title is a description: it goes first in the notes.
+  if (headings) notes.unshift(...loose.splice(0));
   // No headings: lines starting with a number or bullet are ingredients, the rest are steps.
   for (const line of loose) {
     const isIngredient = !/^\s*(?:step\s*)?\d+\s*[.)]\s/i.test(line) && (AMOUNT.test(stripBullet(line).replace(/[½⅓⅔¼¾⅛]/, "1")) || /^\s*[-*•▢]/.test(line)) && line.length < 90;
     if (isIngredient) r.ingredients.push(parseIngredient(line));
     else r.instructions.push(clean(stripStepNo(stripBullet(line))));
   }
-  r.notes = notes.join("\n");
+  r.notes = notes.join("\n\n");
   r.tags = [...new Set(r.tags)];
   return r;
 }

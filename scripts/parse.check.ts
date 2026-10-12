@@ -7,6 +7,8 @@ assert.deepEqual(parseIngredient("- 2 Tbsp. butter, melted"), { amount: "2", uni
 assert.deepEqual(parseIngredient("2-3 cloves garlic"), { amount: "2-3", unit: "cloves", name: "garlic" });
 assert.deepEqual(parseIngredient("Salt to taste"), { amount: "", unit: "", name: "Salt to taste" });
 assert.deepEqual(parseIngredient("- ½ cup parmesan"), { amount: "1/2", unit: "cup", name: "parmesan" });
+assert.deepEqual(parseIngredient("• 6 fluid ounces dark beer"), { amount: "6", unit: "fl oz", name: "dark beer" });
+assert.deepEqual(parseIngredient("1 packet chili seasoning"), { amount: "1", unit: "packet", name: "chili seasoning" });
 assert.deepEqual(parseIngredient("3 eggs"), { amount: "3", unit: "", name: "eggs" });
 assert.equal(parseMinutes("1 hr 20 mins"), 80);
 assert.equal(parseMinutes("PT45M"), 45);
@@ -38,6 +40,11 @@ assert.deepEqual(pasted.tags, ["breakfast", "sweet"]);
 assert.equal(pasted.ingredients.length, 3);
 assert.deepEqual(pasted.instructions, ["Whisk the dry ingredients.", "Add milk and stir until just combined.", "Cook on a hot griddle."]);
 assert.equal(pasted.notes, "Add blueberries if you like.");
+
+// A description under the title is kept as a note, not mistaken for a step; pasted \u2014 escapes become real dashes.
+const [described] = parseAny(`Beer Chili\nA thick, hearty chili \\u2014 for a big pot.\n\nINGREDIENTS\n• 1 lb beef\n\nSTEPS\n1. Brown the beef.`);
+assert.deepEqual(described.instructions, ["Brown the beef."]);
+assert.equal(described.notes, "A thick, hearty chili — for a big pot.");
 
 // No headings at all: numbers start ingredients, sentences are steps.
 const [loose] = parseAny(`Quick Salsa\n2 tomatoes, diced\n1/2 onion\nMix everything and chill for an hour.`);
