@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
-import { BookOpen, ChefHat, Download, FileUp, Heart, Link2, Search, Sparkles, Trash2 } from "lucide-react";
+import { BookOpen, CalendarDays, ChefHat, ShoppingBasket, Download, FileUp, Heart, Link2, Search, Sparkles, Trash2 } from "lucide-react";
 import { RecipeEditor, RecipeView, download, minutes } from "@/components/recipe";
+import { addToPlan, PlannerView, ShoppingView, today } from "@/components/planner";
 import { UpdateButton } from "@/components/update-button";
+import { emptyKitchen, type Kitchen, type Meal, weekStart, addDays } from "@/lib/plan";
 import { parseAny, type Recipe, toMarkdown } from "@/lib/recipe";
 import { cn, useStored } from "@/lib/utils";
 
@@ -21,14 +23,31 @@ Instructions
 2. Melt butter and cook the garlic for 1 minute.
 3. Toss with the pasta and parmesan.`;
 
+type Tab = "import" | "library" | "planner" | "shopping";
+
 export function App() {
   const [library, setLibrary] = useStored<Recipe[]>("recipe-importer-library", () => []);
-  const [tab, setTab] = useState<"import" | "library">(library.length ? "library" : "import");
+  const [kitchen, setKitchen] = useStored<Kitchen>("recipe-book-kitchen", emptyKitchen);
+  const [tab, setTab] = useState<Tab>(library.length ? "library" : "import");
+  const [openId, setOpenId] = useState(library[0]?.id ?? "");
+  const [range, setRange] = useState<[string, string]>(() => { const s = weekStart(today()); return [s, addDays(s, 6)]; });
 
   function save(rs: Recipe[]) {
     const ids = new Set(rs.map((r) => r.id));
     setLibrary([...rs, ...library.filter((r) => !ids.has(r.id))]);
   }
+  /** Replaces the library; meals planned from a deleted recipe go with it. */
+  function replaceLibrary(rs: Recipe[]) {
+    setLibrary(rs);
+    const ids = new Set(rs.map((r) => r.id));
+    if (kitchen.plan.some((p) => p.recipeId && !ids.has(p.recipeId))) setKitchen({ ...kitchen, plan: kitchen.plan.filter((p) => !p.recipeId || ids.has(p.recipeId)) });
+  }
+  const tabs = [
+    ["import", "Import", Sparkles],
+    ["library", `Recipes (${library.length})`, BookOpen],
+    ["planner", "Planner", CalendarDays],
+    ["shopping", "Shopping", ShoppingBasket],
+  ] as const;
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
@@ -36,33 +55,51 @@ export function App() {
         <div className="flex items-center gap-3">
           <img src="./favicon.svg" alt="" className="size-10" />
           <div>
-            <h1 className="font-display text-2xl font-bold leading-tight">Recipe Importer</h1>
-            <p className="text-sm text-ink-soft">Paste a recipe or a link, get a clean card.</p>
+            <h1 className="font-display text-2xl font-bold leading-tight">Recipe Book</h1>
+            <p className="text-sm text-ink-soft">Recipes, meal plan and shopping list, kept on your computer.</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <UpdateButton />
           <nav className="flex rounded-lg bg-line/60 p-1" aria-label="Sections">
-            {([["import", "Import", Sparkles], ["library", `Library (${library.length})`, BookOpen]] as const).map(([id, label, Icon]) => (
+            {tabs.map(([id, label, Icon]) => (
               <button
                 key={id}
                 type="button"
                 aria-current={tab === id}
+                aria-label={label}
                 onClick={() => setTab(id)}
                 className={cn("inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-semibold text-ink-soft", tab === id && "bg-card text-ink shadow-sm")}
               >
-                <Icon className="size-4" /> {label}
+                <Icon className="size-4" /> <span className="hidden sm:inline">{label}</span>
               </button>
             ))}
           </nav>
         </div>
       </header>
 
-      {tab === "import" ? (
-        <ImportView onSave={(rs) => { save(rs); setTab("library"); }} />
-      ) : (
-        <LibraryView library={library} setLibrary={setLibrary} save={save} onImport={() => setTab("import")} />
+      {tab === "import" && <ImportView onSave={(rs) => { save(rs); setOpenId(rs[0].id); setTab("library"); }} />}
+      {tab === "library" && (
+        <LibraryView
+          library={library}
+          setLibrary={replaceLibrary}
+          save={save}
+          onImport={() => setTab("import")}
+          openId={openId}
+          setOpenId={setOpenId}
+          onPlan={(id, date, meal, servings) => setKitchen(addToPlan(kitchen, id, date, meal, servings))}
+        />
       )}
+      {tab === "planner" && (
+        <PlannerView
+          recipes={library}
+          kitchen={kitchen}
+          setKitchen={setKitchen}
+          onOpenRecipe={(id) => { setOpenId(id); setTab("library"); }}
+          onShop={(from, to) => { setRange([from, to]); setTab("shopping"); }}
+        />
+      )}
+      {tab === "shopping" && <ShoppingView key={range.join()} recipes={library} kitchen={kitchen} setKitchen={setKitchen} range={range} />}
     </div>
   );
 }
@@ -167,16 +204,18 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
   );
 }
 
-function LibraryView({ library, setLibrary, save, onImport }: {
+function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, onPlan }: {
   library: Recipe[];
   setLibrary: (rs: Recipe[]) => void;
   save: (rs: Recipe[]) => void;
   onImport: () => void;
+  openId: string;
+  setOpenId: (id: string) => void;
+  onPlan: (recipeId: string, date: string, meal: Meal, servings: number) => void;
 }) {
   const [q, setQ] = useState("");
   const [tag, setTag] = useState("");
   const [favOnly, setFavOnly] = useState(false);
-  const [openId, setOpenId] = useState(library[0]?.id ?? "");
   const [editing, setEditing] = useState(false);
 
   const tags = useMemo(() => [...new Set(library.flatMap((r) => r.tags))].sort(), [library]);
@@ -240,7 +279,9 @@ function LibraryView({ library, setLibrary, save, onImport }: {
           <RecipeEditor key={open.id} recipe={open} onCancel={() => setEditing(false)} onSave={(r) => { save([r]); setEditing(false); }} />
         ) : (
           <RecipeView
+            key={open.id}
             recipe={open}
+            onPlan={(date, meal, servings) => onPlan(open.id, date, meal, servings)}
             onEdit={() => setEditing(true)}
             onFavorite={() => save([{ ...open, favorite: !open.favorite }])}
             onDelete={() => setLibrary(library.filter((r) => r.id !== open.id))}

@@ -67,3 +67,37 @@ assert.deepEqual(back[0].ingredients, pasted.ingredients);
 assert.match(toMarkdown(page), /## Easy Chili & Beans[\s\S]*- 1 lb ground beef[\s\S]*2\. Add beans/);
 
 console.log("parser checks passed");
+
+// ---- planner, scaling and shopping list
+import { addDays, emptyKitchen, formatAmount, guessAisle, scaleAmount, shoppingList, weekStart } from "../src/lib/plan.ts";
+
+assert.equal(scaleAmount("1 1/2", 2), "3");
+assert.equal(scaleAmount("1/2", 1.5), "3/4");
+assert.equal(scaleAmount("2-3", 2), "4-6");
+assert.equal(scaleAmount("a handful", 2), "a handful");
+assert.equal(formatAmount(1 / 3), "1/3");
+assert.equal(formatAmount(2.99), "3");
+assert.equal(weekStart("2026-10-15"), "2026-10-12"); // Thursday → Monday
+assert.equal(addDays("2026-10-31", 1), "2026-11-01");
+assert.equal(guessAisle("black pepper"), "Spices & seasonings");
+assert.equal(guessAisle("bell pepper"), "Produce");
+assert.equal(guessAisle("beef broth"), "Canned & dry goods");
+assert.equal(guessAisle("ground beef"), "Meat & seafood");
+
+const k = emptyKitchen();
+k.plan.push({ id: "a", date: "2026-10-12", meal: "dinner", recipeId: pasted.id, servings: 8 }); // pancakes x2
+k.plan.push({ id: "b", date: "2026-10-13", meal: "dinner", recipeId: page.id, servings: 6 });
+k.plan.push({ id: "c", date: "2026-10-20", meal: "dinner", recipeId: page.id, servings: 6 }); // next week: excluded
+pasted.ingredients.push({ amount: "2", unit: "tbsp", name: "milk, warm" });
+k.manual.push({ id: "m", name: "paper towels", aisle: "Other" });
+const list = shoppingList([pasted, page], k, "2026-10-12", "2026-10-18");
+const line = (n: string) => list.find((l) => l.name === n)!;
+assert.equal(line("flour").amount, "3"); // 1 1/2 cups x2
+assert.equal(line("flour").unit, "cup");
+assert.equal(line("milk").amount, "2 1/4"); // 1 cup + 2 tbsp, x2 = 2 1/4 cups
+assert.equal(line("ground beef").amount, "1"); // only this week's chili
+assert.equal(line("kidney beans").unit, "cans");
+assert.equal(list.at(-1)!.name, "paper towels");
+assert.ok(list.findIndex((l) => l.name === "ground beef") < list.findIndex((l) => l.name === "milk"), "grouped in aisle order");
+
+console.log("planner checks passed");

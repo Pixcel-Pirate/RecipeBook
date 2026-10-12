@@ -1,6 +1,6 @@
 Unicode true
 !include "MUI2.nsh"
-Name "Recipe Importer"
+Name "Recipe Book"
 OutFile "RecipeImporter-Setup.exe"
 InstallDir "$LOCALAPPDATA\Programs\RecipeImporter"
 RequestExecutionLevel user
@@ -8,7 +8,7 @@ SetCompressor /SOLID lzma
 !define MUI_ICON "icon.ico"
 !define MUI_UNICON "icon.ico"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\RecipeImporter.exe"
-!define MUI_FINISHPAGE_RUN_TEXT "Open Recipe Importer"
+!define MUI_FINISHPAGE_RUN_TEXT "Open Recipe Book"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -25,9 +25,9 @@ Section "Install"
   File "resources.neu"
   File "icon.ico"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-  CreateShortcut "$DESKTOP\Recipe Importer.lnk" "$INSTDIR\RecipeImporter.exe" "" "$INSTDIR\icon.ico"
-  CreateShortcut "$SMPROGRAMS\Recipe Importer.lnk" "$INSTDIR\RecipeImporter.exe" "" "$INSTDIR\icon.ico"
-  WriteRegStr HKCU "${UNINST}" "DisplayName" "Recipe Importer"
+  CreateShortcut "$DESKTOP\Recipe Book.lnk" "$INSTDIR\RecipeImporter.exe" "" "$INSTDIR\icon.ico"
+  CreateShortcut "$SMPROGRAMS\Recipe Book.lnk" "$INSTDIR\RecipeImporter.exe" "" "$INSTDIR\icon.ico"
+  WriteRegStr HKCU "${UNINST}" "DisplayName" "Recipe Book"
   WriteRegStr HKCU "${UNINST}" "DisplayIcon" "$INSTDIR\icon.ico"
   WriteRegStr HKCU "${UNINST}" "Publisher" "pixcel"
   WriteRegStr HKCU "${UNINST}" "DisplayVersion" "1.0.0"
@@ -38,14 +38,14 @@ Section "Install"
   StrCmp $0 "" 0 done
   ReadRegStr $0 HKCU "Software\Microsoft\EdgeUpdate\Clients\${WV2}" "pv"
   StrCmp $0 "" 0 done
-  MessageBox MB_YESNO "Recipe Importer needs Microsoft Edge WebView2, which isn't on this PC yet. Open Microsoft's download page now?" IDNO done
+  MessageBox MB_YESNO "Recipe Book needs Microsoft Edge WebView2, which isn't on this PC yet. Open Microsoft's download page now?" IDNO done
   ExecShell "open" "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
   done:
 SectionEnd
 
 Section "Uninstall"
-  Delete "$DESKTOP\Recipe Importer.lnk"
-  Delete "$SMPROGRAMS\Recipe Importer.lnk"
+  Delete "$DESKTOP\Recipe Book.lnk"
+  Delete "$SMPROGRAMS\Recipe Book.lnk"
   RMDir /r "$INSTDIR"
   DeleteRegKey HKCU "${UNINST}"
 SectionEnd

@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Check, Clock, Copy, Download, Heart, Pencil, Trash2, Users, X } from "lucide-react";
+import { CalendarPlus, Check, Clock, Copy, Download, Heart, Minus, Pencil, Plus, Trash2, Users, X } from "lucide-react";
+import { PlanDialog } from "@/components/planner";
+import { type Meal, scaleIngredient } from "@/lib/plan";
 import { ingredientLine, minutes, parseIngredient, type Recipe, toMarkdown } from "@/lib/recipe";
 import { cn } from "@/lib/utils";
 
@@ -103,13 +105,17 @@ export { minutes };
 
 const host = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
 
-export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite }: {
+export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: {
   recipe: Recipe;
   onEdit: () => void;
   onDelete: () => void;
   onFavorite: () => void;
+  onPlan: (date: string, meal: Meal, servings: number) => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [serves, setServes] = useState(r.servings);
+  const [planning, setPlanning] = useState(false);
+  const factor = r.servings && serves ? serves / r.servings : 1;
   const isLink = /^https?:\/\//.test(r.source);
   const iconBtn = "btn-soft inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold [&_svg]:size-4";
 
@@ -128,6 +134,7 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite }: {
           <button type="button" className={iconBtn} onClick={onFavorite} aria-pressed={r.favorite} aria-label="Favorite">
             <Heart className={cn(r.favorite && "fill-tomato text-tomato")} />
           </button>
+          <button type="button" className="btn inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold [&_svg]:size-4" onClick={() => setPlanning(true)}><CalendarPlus /> Plan</button>
           <button type="button" className={iconBtn} onClick={onEdit}><Pencil /> Edit</button>
           <button
             type="button"
@@ -146,7 +153,17 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite }: {
       </header>
 
       <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-soft">
-        {r.servings > 0 && <span className="inline-flex items-center gap-1.5"><Users className="size-4" /> Serves {r.servings}</span>}
+        {r.servings > 0 && (
+          <span className="inline-flex items-center gap-1.5">
+            <Users className="size-4" /> Serves
+            <span className="inline-flex items-center rounded-md border border-line bg-white">
+              <button type="button" className="px-2 py-0.5 hover:text-tomato" aria-label="Fewer servings" onClick={() => setServes(Math.max(1, serves - 1))}><Minus className="size-3.5" /></button>
+              <span className="min-w-6 text-center font-semibold text-ink" aria-live="polite">{serves}</span>
+              <button type="button" className="px-2 py-0.5 hover:text-tomato" aria-label="More servings" onClick={() => setServes(serves + 1)}><Plus className="size-3.5" /></button>
+            </span>
+            {serves !== r.servings && <button type="button" className="text-xs underline" onClick={() => setServes(r.servings)}>reset</button>}
+          </span>
+        )}
         {r.prepTime > 0 && <span className="inline-flex items-center gap-1.5"><Clock className="size-4" /> Prep {minutes(r.prepTime)}</span>}
         {r.cookTime > 0 && <span className="inline-flex items-center gap-1.5"><Clock className="size-4" /> Cook {minutes(r.cookTime)}</span>}
       </div>
@@ -160,7 +177,7 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite }: {
         <section>
           <h3 className="font-display text-lg font-semibold">Ingredients</h3>
           <ul className="mt-2 space-y-1.5">
-            {r.ingredients.map((i, n) => (
+            {r.ingredients.map((ing) => scaleIngredient(ing, factor)).map((i, n) => (
               <li key={n} className="flex gap-2 border-b border-line/70 pb-1.5">
                 <span className="min-w-16 font-semibold text-tomato">{[i.amount, i.unit].filter(Boolean).join(" ")}</span>
                 <span>{i.name}</span>
@@ -180,6 +197,14 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite }: {
           </ol>
         </section>
       </div>
+      {planning && (
+        <PlanDialog
+          title={r.title}
+          servings={serves || 2}
+          onClose={() => setPlanning(false)}
+          onPlan={(date, meal, servings) => { onPlan(date, meal, servings); setPlanning(false); }}
+        />
+      )}
       {r.notes && (
         <section className="mt-6 rounded-lg bg-herb/8 p-4">
           <h3 className="font-display font-semibold text-herb">Notes</h3>

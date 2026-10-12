@@ -10,7 +10,7 @@
   "logging": { "enabled": false, "writeToLogFile": false },
   "modes": {
     "window": {
-      "title": "Recipe Importer",
+      "title": "Recipe Book",
       "width": 1200,
       "height": 860,
       "minWidth": 900,

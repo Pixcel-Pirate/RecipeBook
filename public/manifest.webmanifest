@@ -1,5 +1,5 @@
 {
-  "name": "Recipe Importer",
+  "name": "Recipe Book",
   "short_name": "Recipes",
   "description": "Paste a recipe, get a clean card",
   "start_url": "./",

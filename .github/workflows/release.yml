@@ -50,4 +50,4 @@ jobs:
         run: |
           [ "${GITHUB_REF_TYPE}" = tag ] || { git tag "$TAG"; git push origin "$TAG"; }
           NOTES=RELEASE_NOTES.md; [ -f $NOTES ] || NOTES=/dev/null
-          gh release create "$TAG" /tmp/inst/RecipeImporter-Setup.exe --title "Recipe Importer $TAG" --notes-file $NOTES --generate-notes
+          gh release create "$TAG" /tmp/inst/RecipeImporter-Setup.exe --title "Recipe Book $TAG" --notes-file $NOTES --generate-notes

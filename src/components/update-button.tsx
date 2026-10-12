@@ -23,7 +23,7 @@ export function UpdateButton() {
   const label = `Update to ${latest}`;
   if (DESKTOP)
     return (
-      <a className={cls} href={`https://github.com/${REPO}/releases/latest/download/RecipeImporter-Setup.exe`} title="Downloads the new installer. Close Recipe Importer, then run it.">
+      <a className={cls} href={`https://github.com/${REPO}/releases/latest/download/RecipeImporter-Setup.exe`} title="Downloads the new installer. Close Recipe Book, then run it.">
         <Download className="size-4" /> {label}
       </a>
     );
