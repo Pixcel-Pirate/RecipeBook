@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, Clock, Copy, Download, Heart, Pencil, Trash2, Users, X } from "lucide-react";
-import { ingredientLine, parseIngredient, type Recipe, toMarkdown } from "@/lib/recipe";
+import { ingredientLine, minutes, parseIngredient, type Recipe, toMarkdown } from "@/lib/recipe";
 import { cn } from "@/lib/utils";
 
 export function download(name: string, body: string, type = "application/json") {
@@ -99,13 +99,9 @@ export function RecipeEditor({ recipe, onSave, onCancel, saveLabel = "Save" }: {
   );
 }
 
-const host = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
+export { minutes };
 
-export function minutes(n: number) {
-  if (!n) return "";
-  const h = Math.floor(n / 60);
-  return h ? `${h} hr${n % 60 ? ` ${n % 60} min` : ""}` : `${n} min`;
-}
+const host = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
 
 export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite }: {
   recipe: Recipe;

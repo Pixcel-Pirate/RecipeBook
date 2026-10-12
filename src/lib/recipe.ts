@@ -208,11 +208,17 @@ export function parseAny(input: string, url = ""): Recipe[] {
 
 export const ingredientLine = (i: Ingredient) => [i.amount, i.unit, i.name].filter(Boolean).join(" ");
 
+export function minutes(n: number) {
+  if (!n) return "";
+  const h = Math.floor(n / 60);
+  return h ? `${h} hr${n % 60 ? ` ${n % 60} min` : ""}` : `${n} min`;
+}
+
 export function toMarkdown(r: Recipe): string {
   const meta = [
     r.servings && `**Servings:** ${r.servings}`,
-    r.prepTime && `**Prep:** ${r.prepTime} min`,
-    r.cookTime && `**Cook:** ${r.cookTime} min`,
+    r.prepTime && `**Prep:** ${minutes(r.prepTime)}`,
+    r.cookTime && `**Cook:** ${minutes(r.cookTime)}`,
   ].filter(Boolean).join(" · ");
   return [
     `## ${r.title || "Untitled recipe"}`,
