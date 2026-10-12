@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f6efe3;
+  --color-card: #fffaf1;
+  --color-ink: #2f2219;
+  --color-ink-soft: #6b5544;
+  --color-ink-faint: #9c8673;
+  --color-line: #e6d8c3;
+  --color-tomato: #c8462b;
+  --color-tomato-hi: #dd5a3d;
+  --color-honey: #e9a23b;
+  --color-herb: #4f7a45;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    font-size: 112.5%;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-bg);
+  }
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-tomato);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: rgba(233, 162, 59, 0.4);
+  }
+}
+
+@layer components {
+  .btn {
+    background: var(--color-tomato);
+    color: #fff;
+  }
+  .btn:hover {
+    background: var(--color-tomato-hi);
+  }
+  .btn-soft {
+    background: transparent;
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+  .btn-soft:hover {
+    background: rgba(200, 70, 43, 0.07);
+  }
+  .field {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-line);
+    background: #fff;
+    padding: 0.5rem 0.75rem;
+    color: var(--color-ink);
+  }
+  .field:focus {
+    outline: 2px solid var(--color-tomato);
+    outline-offset: 0;
+    border-color: transparent;
+  }
+  .label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+}

@@ -1,0 +1,53 @@
+# Push a tag like v1.2.0 and this builds the site, the Windows installer, and the GitHub release.
+name: Release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Pick the version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_REF_TYPE}" != tag ]; then
+            TAG="v$(date +%Y.%m.%d)"; n=1
+            # second release on the same day gets .2, .3 ... so the app sees it as new
+            while git ls-remote --exit-code --tags origin "$TAG" >/dev/null; do n=$((n+1)); TAG="v$(date +%Y.%m.%d).$n"; done
+          fi
+          echo "TAG=$TAG" >> $GITHUB_ENV
+      - run: npm ci && VITE_VERSION=$TAG npm run build
+        env: { ELECTRON_SKIP_BINARY_DOWNLOAD: "1" }
+
+      - name: Deploy web app to gh-pages
+        run: |
+          cp -r dist /tmp/site && cd /tmp/site && touch .nojekyll
+          git init -qb gh-pages && git add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "Deploy $GITHUB_REF_NAME"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" gh-pages
+
+      - name: Build Windows installer
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq nsis
+          mkdir -p /tmp/neu/resources && cd /tmp/neu
+          cp $GITHUB_WORKSPACE/desktop-lite/neutralino.config.json .
+          cp -r $GITHUB_WORKSPACE/dist/. resources/ && cp $GITHUB_WORKSPACE/public/icon-512.png resources/icon.png
+          npx -y @neutralinojs/neu@11 update && npx -y @neutralinojs/neu@11 build --release
+          mkdir /tmp/inst && cd /tmp/inst
+          cp /tmp/neu/dist/RecipeImporter/RecipeImporter-win_x64.exe RecipeImporter.exe
+          cp /tmp/neu/dist/RecipeImporter/resources.neu .
+          cp $GITHUB_WORKSPACE/desktop-lite/installer.nsi $GITHUB_WORKSPACE/desktop-lite/icon.ico .
+          makensis -V2 installer.nsi
+
+      - name: Publish release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          [ "${GITHUB_REF_TYPE}" = tag ] || { git tag "$TAG"; git push origin "$TAG"; }
+          NOTES=RELEASE_NOTES.md; [ -f $NOTES ] || NOTES=/dev/null
+          gh release create "$TAG" /tmp/inst/RecipeImporter-Setup.exe --title "Recipe Importer $TAG" --notes-file $NOTES --generate-notes

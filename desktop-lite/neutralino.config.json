@@ -1,0 +1,32 @@
+{
+  "applicationId": "app.recipeimporter.desktop",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 52731,
+  "documentRoot": "/resources/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": false,
+  "logging": { "enabled": false, "writeToLogFile": false },
+  "modes": {
+    "window": {
+      "title": "Recipe Importer",
+      "width": 1200,
+      "height": 860,
+      "minWidth": 900,
+      "minHeight": 640,
+      "center": true,
+      "icon": "/resources/icon.png",
+      "enableInspector": false,
+      "resizable": true,
+      "exitProcessOnClose": true
+    }
+  },
+  "cli": {
+    "binaryName": "RecipeImporter",
+    "resourcesPath": "/resources/",
+    "extensionsPath": "/extensions/",
+    "binaryVersion": "nightly",
+    "clientVersion": "nightly"
+  }
+}
