@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
-const REPO = "Pixcel-Pirate/Recipe-Importer";
+const REPO = "Pixcel-Pirate/RecipeBook";
 const VERSION = import.meta.env.VITE_VERSION as string | undefined;
 const DESKTOP = location.hostname === "127.0.0.1";
 

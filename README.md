@@ -2,7 +2,7 @@
 
 **Paste a recipe, get a clean card.** Recipe Importer takes recipes from anywhere and turns them into one tidy format: a copied web page, a text from a friend, your own notes, or a file. Each recipe gets a title, source, servings, prep and cook time, ingredients (amount, unit, name), steps, tags and notes. Check it over, save it to your library, and export the lot whenever you want.
 
-**[⬇ Download for Windows](https://github.com/Pixcel-Pirate/Recipe-Importer/releases/latest/download/RecipeImporter-Setup.exe)** · **[Open the web app](https://pixcel-pirate.github.io/Recipe-Importer/)** · **[All releases](https://github.com/Pixcel-Pirate/Recipe-Importer/releases)**
+**[⬇ Download for Windows](https://github.com/Pixcel-Pirate/RecipeBook/releases/latest/download/RecipeImporter-Setup.exe)** · **[Open the web app](https://pixcel-pirate.github.io/RecipeBook/)** · **[All releases](https://github.com/Pixcel-Pirate/RecipeBook/releases)**
 
 ## What it does
 
@@ -14,9 +14,9 @@
 
 ## Install
 
-**Windows app:** run [RecipeImporter-Setup.exe](https://github.com/Pixcel-Pirate/Recipe-Importer/releases/latest/download/RecipeImporter-Setup.exe). It installs for your user only and adds a desktop shortcut. The app isn't code-signed, so Windows may show "Windows protected your PC". If it does, click **More info**, then **Run anyway**.
+**Windows app:** run [RecipeImporter-Setup.exe](https://github.com/Pixcel-Pirate/RecipeBook/releases/latest/download/RecipeImporter-Setup.exe). It installs for your user only and adds a desktop shortcut. The app isn't code-signed, so Windows may show "Windows protected your PC". If it does, click **More info**, then **Run anyway**.
 
-**Web app (works offline):** open https://pixcel-pirate.github.io/Recipe-Importer/ in Edge or Chrome, then click **Install** in the address bar.
+**Web app (works offline):** open https://pixcel-pirate.github.io/RecipeBook/ in Edge or Chrome, then click **Install** in the address bar.
 
 ## Privacy
 
