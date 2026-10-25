@@ -279,7 +279,7 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
 
   if (!library.length)
     return (
-      <div className="rounded-xl border border-dashed border-line p-12 text-center">
+      <div className="rounded-[6px] border-2 border-dashed border-line p-12 text-center">
         <ChefHat className="mx-auto size-10 text-ink-faint" />
         <p className="mt-3 text-ink-soft">No recipes yet.</p>
         <button type="button" className="btn mt-4 inline-flex h-10 items-center rounded-md px-4 text-sm font-semibold" onClick={onImport}>Import your first recipe</button>

@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-25T00:00:00Z",
+  "title": "Design System: Recipe Book",
+  "extensions": {
+    "colorMeta": {
+      "aisle-sign-green": {
+        "role": "primary",
+        "displayName": "Aisle-Sign Green",
+        "canonical": "oklch(42.1% 0.091 159.3)",
+        "tonalRamp": [
+          "oklch(15% 0.091 159.3)",
+          "oklch(25% 0.091 159.3)",
+          "oklch(35% 0.091 159.3)",
+          "oklch(45% 0.091 159.3)",
+          "oklch(58% 0.091 159.3)",
+          "oklch(70% 0.091 159.3)",
+          "oklch(82% 0.091 159.3)",
+          "oklch(95% 0.091 159.3)"
+        ]
+      },
+      "aisle-sign-green-hi": {
+        "role": "primary",
+        "displayName": "Aisle-Sign Green Hi",
+        "canonical": "oklch(47.7% 0.105 158.7)",
+        "tonalRamp": [
+          "oklch(15% 0.105 158.7)",
+          "oklch(25% 0.105 158.7)",
+          "oklch(35% 0.105 158.7)",
+          "oklch(45% 0.105 158.7)",
+          "oklch(58% 0.105 158.7)",
+          "oklch(70% 0.105 158.7)",
+          "oklch(82% 0.105 158.7)",
+          "oklch(95% 0.105 158.7)"
+        ]
+      },
+      "sign-band-green": {
+        "role": "primary",
+        "displayName": "Sign-Band Green",
+        "canonical": "oklch(36.4% 0.076 160.2)",
+        "tonalRamp": [
+          "oklch(15% 0.076 160.2)",
+          "oklch(25% 0.076 160.2)",
+          "oklch(35% 0.076 160.2)",
+          "oklch(45% 0.076 160.2)",
+          "oklch(58% 0.076 160.2)",
+          "oklch(70% 0.076 160.2)",
+          "oklch(82% 0.076 160.2)",
+          "oklch(95% 0.076 160.2)"
+        ]
+      },
+      "shelf-tag-yellow": {
+        "role": "secondary",
+        "displayName": "Shelf-Tag Yellow",
+        "canonical": "oklch(87.9% 0.162 90.9)",
+        "tonalRamp": [
+          "oklch(15% 0.162 90.9)",
+          "oklch(25% 0.162 90.9)",
+          "oklch(35% 0.162 90.9)",
+          "oklch(45% 0.162 90.9)",
+          "oklch(58% 0.162 90.9)",
+          "oklch(70% 0.162 90.9)",
+          "oklch(82% 0.162 90.9)",
+          "oklch(95% 0.162 90.9)"
+        ]
+      },
+      "produce-red": {
+        "role": "tertiary",
+        "displayName": "Produce Red",
+        "canonical": "oklch(51% 0.183 29.2)",
+        "tonalRamp": [
+          "oklch(15% 0.183 29.2)",
+          "oklch(25% 0.183 29.2)",
+          "oklch(35% 0.183 29.2)",
+          "oklch(45% 0.183 29.2)",
+          "oklch(58% 0.183 29.2)",
+          "oklch(70% 0.183 29.2)",
+          "oklch(82% 0.183 29.2)",
+          "oklch(95% 0.183 29.2)"
+        ]
+      },
+      "aisle-ink": {
+        "role": "neutral",
+        "displayName": "Aisle Ink",
+        "canonical": "oklch(23.5% 0.026 160.3)",
+        "tonalRamp": [
+          "oklch(15% 0.026 160.3)",
+          "oklch(25% 0.026 160.3)",
+          "oklch(35% 0.026 160.3)",
+          "oklch(45% 0.026 160.3)",
+          "oklch(58% 0.026 160.3)",
+          "oklch(70% 0.026 160.3)",
+          "oklch(82% 0.026 160.3)",
+          "oklch(95% 0.026 160.3)"
+        ]
+      },
+      "aisle-ink-soft": {
+        "role": "neutral",
+        "displayName": "Aisle Ink Soft",
+        "canonical": "oklch(41.9% 0.03 159.4)"
+      },
+      "aisle-ink-faint": {
+        "role": "neutral",
+        "displayName": "Aisle Ink Faint",
+        "canonical": "oklch(53% 0.027 158.5)"
+      },
+      "shelf-rule": {
+        "role": "neutral",
+        "displayName": "Shelf Rule",
+        "canonical": "oklch(89% 0.011 149.8)",
+        "tonalRamp": [
+          "oklch(15% 0.011 149.8)",
+          "oklch(25% 0.011 149.8)",
+          "oklch(35% 0.011 149.8)",
+          "oklch(45% 0.011 149.8)",
+          "oklch(58% 0.011 149.8)",
+          "oklch(70% 0.011 149.8)",
+          "oklch(82% 0.011 149.8)",
+          "oklch(95% 0.011 149.8)"
+        ]
+      },
+      "tile-white": {
+        "role": "neutral",
+        "displayName": "Tile White",
+        "canonical": "oklch(99% 0.003 128.5)"
+      },
+      "after-hours-floor": {
+        "role": "neutral",
+        "displayName": "After Hours Floor",
+        "theme": "dark"
+      },
+      "after-hours-card": {
+        "role": "neutral",
+        "displayName": "After Hours Card",
+        "theme": "dark"
+      },
+      "after-hours-field": {
+        "role": "neutral",
+        "displayName": "After Hours Field",
+        "theme": "dark"
+      },
+      "after-hours-ink": {
+        "role": "neutral",
+        "displayName": "After Hours Ink",
+        "theme": "dark"
+      },
+      "after-hours-ink-soft": {
+        "role": "neutral",
+        "displayName": "After Hours Ink Soft",
+        "theme": "dark"
+      },
+      "after-hours-ink-faint": {
+        "role": "neutral",
+        "displayName": "After Hours Ink Faint",
+        "theme": "dark"
+      },
+      "after-hours-rule": {
+        "role": "neutral",
+        "displayName": "After Hours Rule",
+        "theme": "dark"
+      },
+      "after-hours-sign": {
+        "role": "primary",
+        "displayName": "After Hours Sign",
+        "theme": "dark"
+      },
+      "after-hours-sign-hi": {
+        "role": "primary",
+        "displayName": "After Hours Sign Hi",
+        "theme": "dark"
+      },
+      "after-hours-sign-ink": {
+        "role": "neutral",
+        "displayName": "After Hours Sign Ink",
+        "theme": "dark"
+      },
+      "after-hours-band": {
+        "role": "primary",
+        "displayName": "After Hours Band",
+        "theme": "dark"
+      },
+      "after-hours-band-ink": {
+        "role": "neutral",
+        "displayName": "After Hours Band Ink",
+        "theme": "dark"
+      },
+      "after-hours-red": {
+        "role": "tertiary",
+        "displayName": "After Hours Red",
+        "theme": "dark"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The open recipe's title."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "View headings and the app name."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Dialog titles and recipe section heads."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text on an 18px root."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels above fields."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Amounts, dates and counts in tabular figures."
+      }
+    },
+    "shadows": [
+      {
+        "name": "hanging-sign",
+        "value": "0 6px 10px -6px rgb(0 0 0 / 0.45)",
+        "purpose": "Active section tab hanging from the band."
+      },
+      {
+        "name": "aisle-sign",
+        "value": "0 6px 12px -8px rgb(0 0 0 / 0.5)",
+        "purpose": "Aisle-group signs on the shopping list."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Shared ease for every entrance and press."
+      },
+      {
+        "name": "sign-drop",
+        "value": "0.55s ease-out, translateY(-105%) then swing -2.2deg / 1deg to rest",
+        "purpose": "Active section sign dropping onto its hook."
+      },
+      {
+        "name": "rise-in",
+        "value": "0.4s, 8px rise, stagger 30ms capped at 8 rows",
+        "purpose": "List rows and the incoming section."
+      },
+      {
+        "name": "dialog-in",
+        "value": "0.32s, 14px rise from scale 0.98",
+        "purpose": "Dialog open."
+      },
+      {
+        "name": "strike",
+        "value": "0.3s scaleX from left",
+        "purpose": "Checking off a shopping item."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97), 0.12s",
+        "purpose": "Button active state."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all entrances become fade-in; press scale off",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "themes": {
+      "switch": "data-theme=light|dark on <html>, resolved from System/Light/Dark; theme-color #0b4a30 light, #08271a dark"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action in a view or dialog.",
+      "html": "<button class=\"ds-btn\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg>Save</button>",
+      "css": ".ds-btn{font-family:var(--font-sans);display:inline-flex;align-items:center;gap:.5rem;height:2.5rem;padding:0 1rem;border:0;border-radius:6px;background:var(--color-sign);color:var(--color-sign-ink);font-size:.875rem;font-weight:600;cursor:pointer;transition:background-color .15s,transform .12s cubic-bezier(0.16,1,0.3,1)}.ds-btn:hover{background:var(--color-sign-hi)}.ds-btn:active{transform:scale(.97)}.ds-btn:focus-visible{outline:2px solid var(--color-sign);outline-offset:2px}"
+    },
+    {
+      "name": "Soft Button",
+      "kind": "button",
+      "refersTo": "button-soft",
+      "description": "Secondary actions; a 2px inset ring that turns green on hover.",
+      "html": "<button class=\"ds-btn-soft\">Not now</button>",
+      "css": ".ds-btn-soft{font-family:var(--font-sans);display:inline-flex;align-items:center;gap:.5rem;height:2.5rem;padding:0 1rem;border:0;border-radius:6px;background:transparent;color:var(--color-ink);box-shadow:inset 0 0 0 2px var(--color-line);font-size:.875rem;font-weight:600;cursor:pointer;transition:box-shadow .15s,color .15s,transform .12s cubic-bezier(0.16,1,0.3,1)}.ds-btn-soft:hover{box-shadow:inset 0 0 0 2px var(--color-sign)}.ds-btn-soft:active{transform:scale(.97)}.ds-btn-soft:focus-visible{outline:2px solid var(--color-sign);outline-offset:2px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Text, date, number and select inputs, with a label above.",
+      "html": "<label class=\"ds-label\" for=\"ds-f\">Servings</label><input id=\"ds-f\" class=\"ds-field\" placeholder=\"2\">",
+      "css": ".ds-label{font-family:var(--font-sans);display:block;margin-bottom:.25rem;font-size:.8rem;font-weight:650;color:var(--color-ink-soft)}.ds-field{font-family:var(--font-sans);width:100%;border-radius:6px;border:2px solid var(--color-line);background:var(--color-field);padding:.5rem .75rem;color:var(--color-ink);font-size:1rem;transition:border-color .15s}.ds-field::placeholder{color:var(--color-ink-faint)}.ds-field:hover{border-color:color-mix(in oklab,var(--color-sign) 45%,var(--color-line))}.ds-field:focus{outline:2px solid var(--color-sign);outline-offset:0;border-color:transparent}"
+    },
+    {
+      "name": "Section Tabs",
+      "kind": "nav",
+      "refersTo": "section-tab-active",
+      "description": "Aisle-sign tabs in the green header band; the active one drops in as a yellow hanging sign.",
+      "html": "<nav class=\"ds-band\"><button class=\"ds-tab\">Import</button><button class=\"ds-tab ds-on\" aria-current=\"page\"><span class=\"ds-drop\"></span><span class=\"ds-t\">Recipes</span></button><button class=\"ds-tab\">Planner</button><button class=\"ds-tab\">Shopping</button></nav>",
+      "css": ".ds-band{display:flex;background:var(--color-band);padding:0 .5rem}.ds-tab{font-family:var(--font-display);font-stretch:118%;font-weight:800;letter-spacing:-0.01em;position:relative;height:3rem;padding:0 1rem;border:0;background:none;color:color-mix(in srgb,var(--color-band-ink) 75%,transparent);font-size:.875rem;cursor:pointer;transition:color .15s}.ds-tab:hover{color:var(--color-band-ink)}.ds-tab:focus-visible{outline:2px solid var(--color-tag);outline-offset:2px}.ds-on{color:var(--color-tag-ink)}.ds-on:hover{color:var(--color-tag-ink)}.ds-drop{position:absolute;left:2px;right:2px;top:6px;bottom:-10px;border-radius:4px;background:var(--color-tag);box-shadow:0 6px 10px -6px rgb(0 0 0/.45);transform-origin:50% 0;animation:ds-sign-drop .55s cubic-bezier(0.16,1,0.3,1)}.ds-t{position:relative}@keyframes ds-sign-drop{0%{transform:translateY(-105%)}60%{transform:translateY(0) rotate(-2.2deg)}80%{transform:rotate(1deg)}100%{transform:rotate(0)}}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Tag and favorites filters on the recipe rail; selected fills yellow.",
+      "html": "<button class=\"ds-chip\" aria-pressed=\"false\">dinner</button> <button class=\"ds-chip\" aria-pressed=\"true\">quick</button>",
+      "css": ".ds-chip{font-family:var(--font-sans);display:inline-flex;align-items:center;gap:.25rem;border-radius:4px;border:2px solid var(--color-line);background:transparent;padding:.125rem .625rem;font-size:.75rem;font-weight:600;color:var(--color-ink-soft);cursor:pointer;transition:border-color .15s,background-color .15s}.ds-chip:hover{border-color:var(--color-sign)}.ds-chip[aria-pressed=true]{border-color:var(--color-tag);background:var(--color-tag);color:var(--color-tag-ink)}.ds-chip:focus-visible{outline:2px solid var(--color-sign);outline-offset:2px}"
+    },
+    {
+      "name": "Shelf Tag",
+      "kind": "custom",
+      "refersTo": "shelf-tag",
+      "description": "Yellow tag with a punched hole: recipe tags, planner day labels, the update button.",
+      "html": "<span class=\"ds-tag\">slow cooker</span>",
+      "css": ".ds-tag{font-family:var(--font-sans);position:relative;display:inline-block;background:var(--color-tag);color:var(--color-tag-ink);border-radius:4px;padding:.125rem .5rem .125rem 1.35rem;font-size:.75rem;font-weight:700}.ds-tag::before{content:\"\";position:absolute;top:50%;left:.5rem;width:.42rem;height:.42rem;border-radius:50%;translate:0 -50%;background:var(--color-card)}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "The one container: card fill, 2px rule, 6px corners, no shadow.",
+      "html": "<section class=\"ds-panel\"><h3 class=\"ds-h\">Ingredients</h3><p class=\"ds-row\"><b>2 tbsp</b> tomato paste</p><p class=\"ds-row\"><b>1 tsp</b> salt</p></section>",
+      "css": ".ds-panel{font-family:var(--font-sans);border-radius:6px;border:2px solid var(--color-line);background:var(--color-card);padding:1.25rem;color:var(--color-ink)}.ds-h{font-family:var(--font-display);font-stretch:118%;font-weight:800;letter-spacing:-0.01em;font-size:1.125rem;margin:0 0 .5rem}.ds-row{margin:0;padding:.375rem 0;border-bottom:1px solid color-mix(in srgb,var(--color-line) 70%,transparent)}.ds-row b{font-variant-numeric:tabular-nums;color:var(--color-sign);display:inline-block;min-width:4rem}"
+    },
+    {
+      "name": "Aisle Group",
+      "kind": "custom",
+      "refersTo": "aisle-sign",
+      "description": "Shopping-list group: a numbered green sign hanging on two wires over a panel of checkable items.",
+      "html": "<section class=\"ds-aisle\"><div class=\"ds-wires\"><i></i><i></i></div><h3 class=\"ds-sign\"><span class=\"ds-num\">3</span><span class=\"ds-name\">Produce</span><span class=\"ds-left\">2 left</span></h3><div class=\"ds-list\"><label class=\"ds-item\"><input type=\"checkbox\" checked><span class=\"ds-strike ds-done\"><b>1</b> yellow onion</span></label><label class=\"ds-item\"><input type=\"checkbox\"><span class=\"ds-strike\"><b>3</b> jalapenos</span></label></div></section>",
+      "css": ".ds-aisle{font-family:var(--font-sans);color:var(--color-ink)}.ds-wires{display:flex;justify-content:space-between;width:70%;height:.75rem;margin:0 auto;padding:0 1.5rem;box-sizing:border-box}.ds-wires i{width:2px;background:color-mix(in srgb,var(--color-ink-faint) 60%,transparent)}.ds-sign{display:flex;align-items:center;gap:.75rem;margin:0;border-radius:6px;background:var(--color-sign);color:var(--color-sign-ink);padding:.5rem .75rem;box-shadow:0 6px 12px -8px rgb(0 0 0/.5)}.ds-num{font-family:var(--font-display);font-stretch:118%;font-weight:800;letter-spacing:-0.01em;display:grid;place-items:center;height:2rem;min-width:2rem;border-radius:4px;background:var(--color-tag);color:var(--color-tag-ink);font-size:1.125rem;font-variant-numeric:tabular-nums}.ds-name{font-family:var(--font-display);font-stretch:118%;font-weight:800;letter-spacing:-0.01em;flex:1;text-transform:uppercase;letter-spacing:.025em;font-size:1rem}.ds-left{font-size:.875rem;font-weight:600;opacity:.85;font-variant-numeric:tabular-nums}.ds-list{margin-top:.5rem;border-radius:6px;border:2px solid var(--color-line);background:var(--color-card)}.ds-item{display:flex;align-items:center;gap:.75rem;padding:.625rem 1rem;border-bottom:2px solid color-mix(in srgb,var(--color-line) 70%,transparent);cursor:pointer}.ds-item:last-child{border:0}.ds-item input{width:1.25rem;height:1.25rem;accent-color:var(--color-sign)}.ds-strike{position:relative}.ds-strike b{color:var(--color-sign);font-variant-numeric:tabular-nums}.ds-strike::after{content:\"\";position:absolute;left:-.15rem;right:-.15rem;top:.68em;height:2px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(0.16,1,0.3,1)}.ds-done{color:var(--color-ink-faint)}.ds-done b{color:inherit}.ds-done::after{transform:scaleX(1)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Grocery Aisle",
+    "overview": "\n**Creative North Star: \"The Grocery Aisle\"**\n\nThe weekly loop is a walk through a grocery store. The shell is a deep green sign band hung over a bright tile-white floor; sections are aisle signs; highlights and selection are shelf-tag yellow; red is kept for things that destroy or fail. Type is store lettering: Archivo pushed wide and heavy for anything that names a place, normal width for everything you read.\n\nDensity is working-tool density: compact controls, 2px rules, panels that hold real content rather than decoration. The base size is raised (18px root) so lists stay readable at arm's length in a kitchen. Dark mode is the store after hours: a green-black floor, the signs dimmed to a lit mint, and the yellow tags left on.\n\nMotion is physical and short: the active section sign drops and swings on its hook, list rows rise in with a capped stagger, a checked item gets a line drawn through it like a scanned tag. Reduced motion collapses every one of these to a fade.",
+    "keyCharacteristics": [
+      "Deep aisle-sign green shell, tile-white work area, shelf-tag yellow for selection and numbering.",
+      "Archivo variable at width 118 and weight 800 for signs and headings; normal width for body.",
+      "Square-ish corners (6px controls, 4px tags) and 2px rules everywhere.",
+      "Shelf tags carry a punched hole; aisle groups hang from two wires.",
+      "Light and dark from one token set, switched by `data-theme` on the root."
+    ],
+    "rules": [
+      {
+        "name": "The Lit Tag Rule",
+        "body": "Shelf-Tag Yellow has no dark override. The tags stay lit after hours; never dim or swap them per theme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Red Means Loss Rule",
+        "body": "Produce Red appears only on delete, remove and error. Meal categories, favorites and emphasis use green or yellow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Theme Rule",
+        "body": "Every color is a token with a light value in `@theme` and a dark value under `:root[data-theme=\"dark\"]`. Components reference tokens, never raw hex.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sign Lettering Rule",
+        "body": "Width 118 and weight 800 belong to things that name a place: headings, section tabs, aisle signs, tags and numbers. Body copy, buttons and labels stay at normal width.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Numbers Rule",
+        "body": "Any number that lines up with another number uses tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Only Signs Hang Rule",
+        "body": "Panels, cards, buttons and dialogs have no drop shadow. A shadow means the element hangs from something.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** take every color from the token set so light and after-hours themes both work without per-component overrides.",
+      "**Do** set headings, tabs, tags and numbers in sign lettering (Archivo, width 118, weight 800) and keep reading text at normal width.",
+      "**Do** use Shelf-Tag Yellow with Tag Ink for selection, numbering and tags, and keep it identical in dark mode.",
+      "**Do** use 2px rules and 6px / 4px corners.",
+      "**Do** give every animation a reduced-motion fade fallback, and use the shared out-expo ease (`cubic-bezier(0.16, 1, 0.3, 1)`).",
+      "**Do** collapse secondary header and row controls on phones (icon-only, or behind a toggle) before letting rows wrap."
+    ],
+    "donts": [
+      "**Don't** use Produce Red for anything but delete, remove and error.",
+      "**Don't** add drop shadows to panels, cards, buttons or dialogs; only hanging signs cast one.",
+      "**Don't** drift toward cream paper and serif recipe-blog styling, or toward a grey dashboard; the ground is tile white or after-hours green-black.",
+      "**Don't** use large rounded corners (anything over 6px) on new surfaces."
+    ]
+  }
+}

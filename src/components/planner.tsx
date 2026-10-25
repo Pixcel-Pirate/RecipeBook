@@ -180,7 +180,7 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
                       onDrop={(e) => { e.preventDefault(); move(e.dataTransfer.getData("text/plan-item"), d, m); }}
                       className={cn("rounded-md", !here.length && "hidden md:block md:min-h-2")}
                     >
-                      {here.length > 0 && <p className="flex items-center gap-1.5 px-1 text-[0.65rem] font-semibold tracking-wide text-ink-faint uppercase"><span className={cn("size-2 rounded-[2px]", MEAL_DOT[m])} />{m}</p>}
+                      {here.length > 0 && <p className="flex items-center gap-1.5 px-1 text-xs font-semibold tracking-wide text-ink-soft uppercase"><span className={cn("size-2 rounded-[2px]", MEAL_DOT[m])} />{m}</p>}
                       {here.map((p) => {
                         const r = p.recipeId ? byId.get(p.recipeId) : undefined;
                         return (
@@ -291,7 +291,7 @@ export function ShoppingView({ recipes, kitchen, setKitchen, range }: {
       </form>
 
       {!lines.length && (
-        <div className="rounded-xl border border-dashed border-line p-10 text-center text-ink-soft">
+        <div className="rounded-[6px] border-2 border-dashed border-line p-10 text-center text-ink-soft">
           <ShoppingBasket className="mx-auto size-9 text-ink-faint" />
           <p className="mt-2">Nothing planned for these days. Add meals in the planner and their ingredients show up here.</p>
         </div>

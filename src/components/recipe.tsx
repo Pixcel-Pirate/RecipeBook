@@ -156,7 +156,7 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
         {r.servings > 0 && (
           <span className="inline-flex items-center gap-1.5">
             <Users className="size-4" /> Serves
-            <span className="inline-flex items-center rounded-[5px] border-2 border-line bg-field">
+            <span className="inline-flex items-center rounded-[4px] border-2 border-line bg-field">
               <button type="button" className="px-2 py-0.5 hover:text-sign" aria-label="Fewer servings" onClick={() => setServes(Math.max(1, serves - 1))}><Minus className="size-3.5" /></button>
               <span className="min-w-6 text-center font-semibold text-ink" aria-live="polite">{serves}</span>
               <button type="button" className="px-2 py-0.5 hover:text-sign" aria-label="More servings" onClick={() => setServes(serves + 1)}><Plus className="size-3.5" /></button>
