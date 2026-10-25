@@ -44,12 +44,12 @@ export function RecipeEditor({ recipe, onSave, onCancel, saveLabel = "Save" }: {
 
   return (
     <form
-      className="space-y-4 rounded-xl border border-line bg-card p-5 shadow-sm"
+      className="space-y-4 panel p-5"
       onSubmit={(e) => { e.preventDefault(); save(); }}
     >
       <div>
         <label className="label" htmlFor={`t-${r.id}`}>Title</label>
-        <input id={`t-${r.id}`} className="field font-display text-lg" value={r.title} onChange={(e) => set({ title: e.target.value })} />
+        <input id={`t-${r.id}`} className="field sign-type text-lg" value={r.title} onChange={(e) => set({ title: e.target.value })} />
       </div>
       <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr_1fr]">
         <div>
@@ -120,19 +120,19 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
   const iconBtn = "btn-soft inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold [&_svg]:size-4";
 
   return (
-    <article className="rounded-xl border border-line bg-card p-6 shadow-sm">
+    <article className="panel rise-in p-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-display text-3xl font-bold">{r.title}</h2>
+          <h2 className="sign-type text-3xl">{r.title}</h2>
           {r.source && (
             <p className="mt-1 text-sm text-ink-soft">
-              From {isLink ? <a className="underline hover:text-tomato" href={r.source} target="_blank" rel="noreferrer">{host(r.source)}</a> : r.source}
+              From {isLink ? <a className="underline hover:text-sign" href={r.source} target="_blank" rel="noreferrer">{host(r.source)}</a> : r.source}
             </p>
           )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={iconBtn} onClick={onFavorite} aria-pressed={r.favorite} aria-label="Favorite">
-            <Heart className={cn(r.favorite && "fill-tomato text-tomato")} />
+            <Heart className={cn(r.favorite && "fill-sign text-sign")} />
           </button>
           <button type="button" className="btn inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold [&_svg]:size-4" onClick={() => setPlanning(true)}><CalendarPlus /> Plan</button>
           <button type="button" className={iconBtn} onClick={onEdit}><Pencil /> Edit</button>
@@ -146,7 +146,7 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
           <button type="button" className={iconBtn} onClick={() => download(`${slug(r.title)}.json`, JSON.stringify(r, null, 2))}>
             <Download /> JSON
           </button>
-          <button type="button" className={cn(iconBtn, "hover:text-tomato")} onClick={() => confirm(`Delete “${r.title}”?`) && onDelete()} aria-label="Delete">
+          <button type="button" className={cn(iconBtn, "hover:text-alert")} onClick={() => confirm(`Delete “${r.title}”?`) && onDelete()} aria-label="Delete">
             <Trash2 />
           </button>
         </div>
@@ -156,10 +156,10 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
         {r.servings > 0 && (
           <span className="inline-flex items-center gap-1.5">
             <Users className="size-4" /> Serves
-            <span className="inline-flex items-center rounded-md border border-line bg-white">
-              <button type="button" className="px-2 py-0.5 hover:text-tomato" aria-label="Fewer servings" onClick={() => setServes(Math.max(1, serves - 1))}><Minus className="size-3.5" /></button>
+            <span className="inline-flex items-center rounded-[5px] border-2 border-line bg-field">
+              <button type="button" className="px-2 py-0.5 hover:text-sign" aria-label="Fewer servings" onClick={() => setServes(Math.max(1, serves - 1))}><Minus className="size-3.5" /></button>
               <span className="min-w-6 text-center font-semibold text-ink" aria-live="polite">{serves}</span>
-              <button type="button" className="px-2 py-0.5 hover:text-tomato" aria-label="More servings" onClick={() => setServes(serves + 1)}><Plus className="size-3.5" /></button>
+              <button type="button" className="px-2 py-0.5 hover:text-sign" aria-label="More servings" onClick={() => setServes(serves + 1)}><Plus className="size-3.5" /></button>
             </span>
             {serves !== r.servings && <button type="button" className="text-xs underline" onClick={() => setServes(r.servings)}>reset</button>}
           </span>
@@ -169,28 +169,28 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
       </div>
       {r.tags.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {r.tags.map((t) => <span key={t} className="rounded-full bg-honey/20 px-2.5 py-0.5 text-xs font-semibold text-ink-soft">{t}</span>)}
+          {r.tags.map((t) => <span key={t} className="shelf-tag py-0.5 pr-2 text-xs font-bold">{t}</span>)}
         </div>
       )}
 
       <div className="mt-6 grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <section>
-          <h3 className="font-display text-lg font-semibold">Ingredients</h3>
+          <h3 className="sign-type text-lg">Ingredients</h3>
           <ul className="mt-2 space-y-1.5">
             {r.ingredients.map((ing) => scaleIngredient(ing, factor)).map((i, n) => (
               <li key={n} className="flex gap-2 border-b border-line/70 pb-1.5">
-                <span className="min-w-16 font-semibold text-tomato">{[i.amount, i.unit].filter(Boolean).join(" ")}</span>
+                <span className="tabular min-w-16 font-bold text-sign">{[i.amount, i.unit].filter(Boolean).join(" ")}</span>
                 <span>{i.name}</span>
               </li>
             ))}
           </ul>
         </section>
         <section>
-          <h3 className="font-display text-lg font-semibold">Steps</h3>
+          <h3 className="sign-type text-lg">Steps</h3>
           <ol className="mt-2 space-y-3">
             {r.instructions.map((s, n) => (
               <li key={n} className="flex gap-3">
-                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-tomato text-sm font-bold text-white">{n + 1}</span>
+                <span className="sign-type tabular grid size-7 shrink-0 place-items-center rounded-[4px] bg-tag text-sm text-tag-ink">{n + 1}</span>
                 <p className="pt-0.5 leading-relaxed">{s}</p>
               </li>
             ))}
@@ -206,8 +206,8 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
         />
       )}
       {r.notes && (
-        <section className="mt-6 rounded-lg bg-herb/8 p-4">
-          <h3 className="font-display font-semibold text-herb">Notes</h3>
+        <section className="mt-6 rounded-lg bg-sign/8 p-4">
+          <h3 className="sign-type text-sign">Notes</h3>
           <p className="mt-1 whitespace-pre-line text-sm leading-relaxed">{r.notes}</p>
         </section>
       )}

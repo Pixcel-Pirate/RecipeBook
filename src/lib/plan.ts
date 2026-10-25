@@ -73,7 +73,9 @@ function dimension(unit: string): ["vol" | "wt" | string, number] {
 }
 
 /** Shopping name: "butter, melted" → "butter". */
-export const baseName = (name: string) => name.split(",")[0].replace(/\(.*?\)/g, "").trim().toLowerCase();
+/** "Cayenne pepper (optional, for heat), ground" -> "Cayenne pepper": drop notes in brackets, then anything after a comma. */
+export const cleanName = (name: string) => name.replace(/\([^)]*\)?/g, "").split(",")[0].replace(/\s+/g, " ").trim();
+export const baseName = (name: string) => cleanName(name).toLowerCase();
 
 // ---- aisles
 
@@ -98,12 +100,12 @@ export function guessAisle(name: string, unit = ""): string {
 
 // ---- the shopping list
 
-export type ShoppingLine = { key: string; name: string; amount: string; unit: string; aisle: string; recipes: string[] };
+export type ShoppingLine = { key: string; name: string; label: string; amount: string; unit: string; aisle: string; recipes: string[] };
 
 /** Plan items from `from` to `to` (inclusive) → scaled, merged ingredients grouped by aisle. Manual items are added at the end. */
 export function shoppingList(recipes: Recipe[], k: Kitchen, from: string, to: string): ShoppingLine[] {
   const byId = new Map(recipes.map((r) => [r.id, r]));
-  type Acc = { name: string; dim: string; raw: string; base: number; units: Set<string>; text: string[]; recipes: Set<string> };
+  type Acc = { name: string; label: string; dim: string; raw: string; base: number; units: Set<string>; text: string[]; recipes: Set<string> };
   const acc = new Map<string, Acc>();
 
   for (const p of k.plan) {
@@ -116,7 +118,7 @@ export function shoppingList(recipes: Recipe[], k: Kitchen, from: string, to: st
       const [dim, mult] = dimension(ing.unit);
       const n = toNumber(ing.amount) * factor;
       const key = `${name}|${dim}`;
-      const a = acc.get(key) ?? { name, dim, raw: ing.unit, base: 0, units: new Set(), text: [], recipes: new Set() };
+      const a = acc.get(key) ?? { name, label: cleanName(ing.name), dim, raw: ing.unit, base: 0, units: new Set(), text: [], recipes: new Set() };
       if (isNaN(n)) { if (ing.amount) a.text.push(scaleAmount(ing.amount, factor)); }
       else { a.base += n * mult; a.units.add(singular(ing.unit)); }
       a.recipes.add(r.title);
@@ -140,10 +142,10 @@ export function shoppingList(recipes: Recipe[], k: Kitchen, from: string, to: st
       }
     }
     amount = [amount, ...a.text].filter(Boolean).join(" + ");
-    return { key, name: a.name, amount, unit, aisle: k.aisleOf[a.name] ?? guessAisle(a.name, unit), recipes: [...a.recipes] };
+    return { key, name: a.name, label: a.label, amount, unit, aisle: k.aisleOf[a.name] ?? guessAisle(a.name, unit), recipes: [...a.recipes] };
   });
 
-  for (const m of k.manual) lines.push({ key: `manual|${m.id}`, name: m.name, amount: "", unit: "", aisle: m.aisle, recipes: [] });
+  for (const m of k.manual) lines.push({ key: `manual|${m.id}`, name: m.name, label: m.name, amount: "", unit: "", aisle: m.aisle, recipes: [] });
 
   const order = (s: string) => { const i = AISLES.indexOf(s); return i < 0 ? AISLES.length : i; };
   return lines.sort((x, y) => order(x.aisle) - order(y.aisle) || x.name.localeCompare(y.name));

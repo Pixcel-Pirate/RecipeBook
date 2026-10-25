@@ -6,7 +6,9 @@
   "documentRoot": "/resources/",
   "url": "/",
   "enableServer": true,
-  "enableNativeAPI": false,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "nativeAllowList": ["filesystem.writeBinaryFile", "os.execCommand", "app.exit"],
   "logging": { "enabled": false, "writeToLogFile": false },
   "modes": {
     "window": {

@@ -1,11 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "@fontsource/fraunces/600.css";
-import "@fontsource/fraunces/700.css";
-import "@fontsource/source-sans-3/400.css";
-import "@fontsource/source-sans-3/600.css";
+import "@fontsource-variable/archivo/wdth.css";
 import "./styles.css";
 import { App } from "@/components/app";
+import { connectDesktop, DESKTOP } from "@/lib/desktop";
+import { applyTheme, storedTheme } from "@/lib/theme";
+
+applyTheme(storedTheme()); // before the first paint, so dark mode never flashes white
 
 createRoot(document.getElementById("app")!).render(
   <StrictMode>
@@ -16,3 +17,5 @@ createRoot(document.getElementById("app")!).render(
 if ("serviceWorker" in navigator && location.protocol.startsWith("http") && location.hostname !== "127.0.0.1") {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
+
+if (DESKTOP) connectDesktop().catch(() => {}); // claim the one-time native token right away

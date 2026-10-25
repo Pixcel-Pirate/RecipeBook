@@ -1,25 +1,55 @@
 @import "tailwindcss";
 
+/* Grocery-aisle world: tile-white floor, aisle-sign green, shelf-tag yellow. Dark = the store after hours. */
 @theme {
-  --color-bg: #f6efe3;
-  --color-card: #fffaf1;
-  --color-ink: #2f2219;
-  --color-ink-soft: #6b5544;
-  --color-ink-faint: #9c8673;
-  --color-line: #e6d8c3;
-  --color-tomato: #c8462b;
-  --color-tomato-hi: #dd5a3d;
-  --color-honey: #e9a23b;
-  --color-herb: #4f7a45;
+  --color-bg: #fbfcfa;
+  --color-card: #ffffff;
+  --color-field: #ffffff;
+  --color-ink: #13221a;
+  --color-ink-soft: #3f5247;
+  --color-ink-faint: #5f7166;
+  --color-line: #d6ddd7;
+  --color-sign: #0d5c3b;
+  --color-sign-hi: #0f6e46;
+  --color-sign-ink: #ffffff;
+  --color-band: #0b4a30;
+  --color-band-ink: #e9f5ee;
+  --color-tag: #ffd23f;
+  --color-tag-ink: #241c00;
+  --color-alert: #b8261c;
 
-  --font-display: "Fraunces", Georgia, serif;
-  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Archivo Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Archivo Variable", "Segoe UI", system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark tokens, used for "Dark" and for "System" when the OS is dark. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0b130f;
+  --color-card: #121e18;
+  --color-field: #0e1813;
+  --color-ink: #e6eee8;
+  --color-ink-soft: #b3c3b9;
+  --color-ink-faint: #8fa297;
+  --color-line: #26362d;
+  --color-sign: #46c486;
+  --color-sign-hi: #5fd69a;
+  --color-sign-ink: #04130b;
+  --color-band: #08271a;
+  --color-band-ink: #d7eee0;
+  --color-alert: #ff7a6b;
+}
+:root {
+  color-scheme: light;
 }
 
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
     font-size: 112.5%;
+    scrollbar-color: var(--color-line) transparent;
   }
   body {
     margin: 0;
@@ -27,45 +57,76 @@
     font-family: var(--font-sans);
     color: var(--color-ink);
     background: var(--color-bg);
+    caret-color: var(--color-sign);
   }
   button:not(:disabled) {
     cursor: pointer;
   }
   :focus-visible {
-    outline: 2px solid var(--color-tomato);
+    outline: 2px solid var(--color-sign);
     outline-offset: 2px;
   }
   ::selection {
-    background: rgba(233, 162, 59, 0.4);
+    background: var(--color-tag);
+    color: var(--color-tag-ink);
+  }
+  a {
+    text-underline-offset: 0.2em;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
   }
 }
 
 @layer components {
+  /* Store-sign lettering: wide and heavy. */
+  .sign-type {
+    font-family: var(--font-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
   .btn {
-    background: var(--color-tomato);
-    color: #fff;
+    background: var(--color-sign);
+    color: var(--color-sign-ink);
+    transition: background-color 0.15s, transform 0.12s var(--ease-out);
   }
   .btn:hover {
-    background: var(--color-tomato-hi);
+    background: var(--color-sign-hi);
   }
   .btn-soft {
     background: transparent;
     color: var(--color-ink);
-    box-shadow: inset 0 0 0 1px var(--color-line);
+    box-shadow: inset 0 0 0 2px var(--color-line);
+    transition: box-shadow 0.15s, color 0.15s, transform 0.12s var(--ease-out);
   }
   .btn-soft:hover {
-    background: rgba(200, 70, 43, 0.07);
+    box-shadow: inset 0 0 0 2px var(--color-sign);
+  }
+  .btn:active:not(:disabled),
+  .btn-soft:active:not(:disabled) {
+    transform: scale(0.97);
   }
   .field {
     width: 100%;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-line);
-    background: #fff;
+    border-radius: 6px;
+    border: 2px solid var(--color-line);
+    background: var(--color-field);
     padding: 0.5rem 0.75rem;
     color: var(--color-ink);
+    transition: border-color 0.15s;
+  }
+  .field::placeholder {
+    color: var(--color-ink-faint);
+  }
+  .field:hover {
+    border-color: color-mix(in oklab, var(--color-sign) 45%, var(--color-line));
   }
   .field:focus {
-    outline: 2px solid var(--color-tomato);
+    outline: 2px solid var(--color-sign);
     outline-offset: 0;
     border-color: transparent;
   }
@@ -73,7 +134,112 @@
     display: block;
     margin-bottom: 0.25rem;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 650;
     color: var(--color-ink-soft);
+  }
+  .panel {
+    border-radius: 6px;
+    border: 2px solid var(--color-line);
+    background: var(--color-card);
+  }
+
+  /* Shelf-edge price tag: yellow strip with a punched hole on the left. */
+  .shelf-tag {
+    position: relative;
+    background: var(--color-tag);
+    color: var(--color-tag-ink);
+    border-radius: 4px;
+    padding-left: 1.35rem;
+  }
+  .shelf-tag::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0.5rem;
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    translate: 0 -50%;
+    background: var(--color-card);
+  }
+
+  /* Checking an item off draws a line through it, like a scanned tag. */
+  .strike {
+    position: relative;
+    transition: color 0.2s;
+  }
+  .strike::after {
+    content: "";
+    position: absolute;
+    left: -0.15rem;
+    right: -0.15rem;
+    top: 0.68em;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .strike[data-done="true"]::after {
+    transform: scaleX(1);
+  }
+
+  dialog[open] {
+    animation: dialog-in 0.32s var(--ease-out);
+  }
+  dialog[open]::backdrop {
+    animation: fade-in 0.25s ease-out;
+  }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+/* The active section sign drops from the band and settles, like a sign hung on a hook. */
+@keyframes sign-drop {
+  0% { transform: translateY(-105%) rotate(0deg); }
+  60% { transform: translateY(0) rotate(-2.2deg); }
+  80% { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+.sign-drop {
+  transform-origin: 50% 0;
+  animation: sign-drop 0.55s var(--ease-out);
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+/* A list appearing as a list: rows rise in with a short, capped stagger (--i set inline). */
+.rise-in {
+  animation: rise-in 0.4s var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 0), 8) * 30ms);
+}
+
+/* Switching sections: the old work area fades, the new one rises into place. */
+::view-transition-old(work) {
+  animation: 0.12s ease-in both fade-out;
+}
+::view-transition-new(work) {
+  animation: 0.38s var(--ease-out) both rise-in;
+}
+/* Theme switch: a quick crossfade of the whole page. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[open], .rise-in, .sign-drop, ::view-transition-new(work) {
+    animation-name: fade-in;
+  }
+  .btn:active:not(:disabled), .btn-soft:active:not(:disabled) {
+    transform: none;
   }
 }

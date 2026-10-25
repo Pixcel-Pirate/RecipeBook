@@ -80,7 +80,7 @@ assert.equal(parseAny(JSON.stringify({ title: { a: 1 } }))[0].title, '{"title":{
 console.log("parser checks passed");
 
 // ---- planner, scaling and shopping list
-import { addDays, emptyKitchen, formatAmount, guessAisle, scaleAmount, shoppingList, weekStart } from "../src/lib/plan.ts";
+import { addDays, baseName, cleanName, emptyKitchen, formatAmount, guessAisle, scaleAmount, shoppingList, weekStart } from "../src/lib/plan.ts";
 
 assert.equal(scaleAmount("1 1/2", 2), "3");
 assert.equal(scaleAmount("1/2", 1.5), "3/4");
@@ -94,6 +94,8 @@ assert.equal(guessAisle("black pepper"), "Spices & seasonings");
 assert.equal(guessAisle("bell pepper"), "Produce");
 assert.equal(guessAisle("beef broth"), "Canned & dry goods");
 assert.equal(guessAisle("ground beef"), "Meat & seafood");
+assert.equal(baseName("cayenne pepper (optional, for extra heat)"), "cayenne pepper");
+assert.equal(cleanName("Rotel diced tomatoes (10oz each), drained"), "Rotel diced tomatoes");
 
 const k = emptyKitchen();
 k.plan.push({ id: "a", date: "2026-10-12", meal: "dinner", recipeId: pasted.id, servings: 8 }); // pancakes x2

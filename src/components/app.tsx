@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
-import { BookOpen, CalendarDays, ChefHat, ShoppingBasket, Download, FileUp, Heart, Link2, Search, Sparkles, Trash2 } from "lucide-react";
+import { flushSync } from "react-dom";
+import { BookOpen, CalendarDays, ChefHat, ShoppingBasket, Download, FileUp, Heart, Link2, Monitor, Moon, Search, Sparkles, Sun, Trash2 } from "lucide-react";
 import { RecipeEditor, RecipeView, download, minutes } from "@/components/recipe";
 import { addToPlan, PlannerView, ShoppingView, today } from "@/components/planner";
-import { UpdateButton } from "@/components/update-button";
+import { UpdatePrompt } from "@/components/update";
+import { type ThemeChoice, useTheme } from "@/lib/theme";
 import { emptyKitchen, type Kitchen, type Meal, weekStart, addDays } from "@/lib/plan";
 import { parseAny, type Recipe, toMarkdown } from "@/lib/recipe";
 import { cn, useStored } from "@/lib/utils";
@@ -28,7 +30,13 @@ type Tab = "import" | "library" | "planner" | "shopping";
 export function App() {
   const [library, setLibrary] = useStored<Recipe[]>("recipe-importer-library", () => []);
   const [kitchen, setKitchen] = useStored<Kitchen>("recipe-book-kitchen", emptyKitchen);
-  const [tab, setTab] = useState<Tab>(library.length ? "library" : "import");
+  const [tab, setTabNow] = useState<Tab>(library.length ? "library" : "import");
+  /** Section changes animate through a view transition where the browser has one. */
+  const setTab = (t: Tab) => {
+    if (t === tab) return;
+    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) return setTabNow(t);
+    document.startViewTransition(() => flushSync(() => setTabNow(t)));
+  };
   const [openId, setOpenId] = useState(library[0]?.id ?? "");
   const [range, setRange] = useState<[string, string]>(() => { const s = weekStart(today()); return [s, addDays(s, 6)]; });
 
@@ -43,64 +51,106 @@ export function App() {
     if (kitchen.plan.some((p) => p.recipeId && !ids.has(p.recipeId))) setKitchen({ ...kitchen, plan: kitchen.plan.filter((p) => !p.recipeId || ids.has(p.recipeId)) });
   }
   const tabs = [
-    ["import", "Import", Sparkles],
-    ["library", `Recipes (${library.length})`, BookOpen],
-    ["planner", "Planner", CalendarDays],
-    ["shopping", "Shopping", ShoppingBasket],
+    ["import", "Import", "Import", Sparkles],
+    ["library", `Recipes (${library.length})`, "Book", BookOpen],
+    ["planner", "Planner", "Plan", CalendarDays],
+    ["shopping", "Shopping", "Shop", ShoppingBasket],
   ] as const;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-      <header className="flex flex-wrap items-center justify-between gap-3 py-5">
-        <div className="flex items-center gap-3">
-          <img src="./favicon.svg" alt="" className="size-10" />
-          <div>
-            <h1 className="font-display text-2xl font-bold leading-tight">Recipe Book</h1>
-            <p className="text-sm text-ink-soft">Recipes, meal plan and shopping list, kept on your computer.</p>
+    <div className="min-h-screen pb-16">
+      <header className="relative z-10 bg-band text-band-ink">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 pt-4 sm:px-6">
+          <div className="flex items-center gap-3 pb-3">
+            <img src="./favicon.svg" alt="" className="size-8 sm:size-10" />
+            <div>
+              <h1 className="sign-type text-xl leading-tight sm:text-2xl">Recipe Book</h1>
+              <p className="hidden text-sm text-band-ink/80 sm:block">Recipes, meal plan and shopping list, kept on your device.</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <UpdateButton />
-          <nav className="flex rounded-lg bg-line/60 p-1" aria-label="Sections">
-            {tabs.map(([id, label, Icon]) => (
-              <button
-                key={id}
-                type="button"
-                aria-current={tab === id}
-                aria-label={label}
-                onClick={() => setTab(id)}
-                className={cn("inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-semibold text-ink-soft", tab === id && "bg-card text-ink shadow-sm")}
-              >
-                <Icon className="size-4" /> <span className="hidden sm:inline">{label}</span>
-              </button>
-            ))}
-          </nav>
+          <div className="ml-auto flex items-center gap-2 pb-3">
+            <UpdatePrompt />
+            <ThemeButton />
+          </div>
+          <Tabs tabs={tabs} tab={tab} setTab={setTab} />
         </div>
       </header>
 
-      {tab === "import" && <ImportView onSave={(rs) => { save(rs); setOpenId(rs[0].id); setTab("library"); }} />}
-      {tab === "library" && (
-        <LibraryView
-          library={library}
-          setLibrary={replaceLibrary}
-          save={save}
-          onImport={() => setTab("import")}
-          openId={openId}
-          setOpenId={setOpenId}
-          onPlan={(id, date, meal, servings) => setKitchen(addToPlan(kitchen, id, date, meal, servings))}
-        />
-      )}
-      {tab === "planner" && (
-        <PlannerView
-          recipes={library}
-          kitchen={kitchen}
-          setKitchen={setKitchen}
-          onOpenRecipe={(id) => { setOpenId(id); setTab("library"); }}
-          onShop={(from, to) => { setRange([from, to]); setTab("shopping"); }}
-        />
-      )}
-      {tab === "shopping" && <ShoppingView key={range.join()} recipes={library} kitchen={kitchen} setKitchen={setKitchen} range={range} />}
+      <main className="mx-auto max-w-6xl px-4 pt-9 sm:px-6" style={{ viewTransitionName: "work" }}>
+        {tab === "import" && <ImportView onSave={(rs) => { save(rs); setOpenId(rs[0].id); setTab("library"); }} />}
+        {tab === "library" && (
+          <LibraryView
+            library={library}
+            setLibrary={replaceLibrary}
+            save={save}
+            onImport={() => setTab("import")}
+            openId={openId}
+            setOpenId={setOpenId}
+            onPlan={(id, date, meal, servings) => setKitchen(addToPlan(kitchen, id, date, meal, servings))}
+          />
+        )}
+        {tab === "planner" && (
+          <PlannerView
+            recipes={library}
+            kitchen={kitchen}
+            setKitchen={setKitchen}
+            onOpenRecipe={(id) => { setOpenId(id); setTab("library"); }}
+            onShop={(from, to) => { setRange([from, to]); setTab("shopping"); }}
+          />
+        )}
+        {tab === "shopping" && <ShoppingView key={range.join()} recipes={library} kitchen={kitchen} setKitchen={setKitchen} range={range} />}
+      </main>
     </div>
+  );
+}
+
+/** Section tabs read like aisle signs; the active one is a yellow sign that drops down below the band. */
+function Tabs({ tabs, tab, setTab }: { tabs: readonly (readonly [Tab, string, string, typeof BookOpen])[]; tab: Tab; setTab: (t: Tab) => void }) {
+  return (
+    <nav className="-mx-1 flex w-full" aria-label="Sections">
+      {tabs.map(([id, label, short, Icon]) => {
+        const on = tab === id;
+        return (
+          <button
+            key={id}
+            type="button"
+            aria-current={on ? "page" : undefined}
+            aria-label={label}
+            onClick={() => setTab(id)}
+            className={cn(
+              "sign-type relative flex h-14 flex-1 flex-col items-center justify-center gap-0.5 px-3 text-xs whitespace-nowrap text-band-ink/75 transition-colors hover:text-band-ink sm:h-12 sm:flex-none sm:flex-row sm:gap-2 sm:px-4 sm:text-sm",
+              on && "text-tag-ink hover:text-tag-ink",
+            )}
+          >
+            {on && <span aria-hidden key={id} className="sign-drop absolute inset-x-0.5 top-1.5 -bottom-2.5 rounded-[4px] bg-tag shadow-[0_6px_10px_-6px_rgb(0_0_0/0.45)]" />}
+            <Icon className="relative size-4" />
+            <span className="relative sm:hidden">{short}</span>
+            <span className="relative hidden sm:inline">{label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+const THEMES: [ThemeChoice, string, typeof Sun][] = [["system", "Match my device", Monitor], ["light", "Light", Sun], ["dark", "Dark", Moon]];
+
+/** Cycles System, Light, Dark. */
+function ThemeButton() {
+  const [choice, setChoice] = useTheme();
+  const i = THEMES.findIndex(([c]) => c === choice);
+  const [, label, Icon] = THEMES[i];
+  const next = THEMES[(i + 1) % THEMES.length];
+  return (
+    <button
+      type="button"
+      onClick={() => setChoice(next[0])}
+      title={`Theme: ${label}. Click for ${next[1].toLowerCase()}.`}
+      aria-label={`Theme: ${label}. Switch to ${next[1].toLowerCase()}.`}
+      className="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-semibold text-band-ink/85 shadow-[inset_0_0_0_1.5px_rgb(255_255_255/0.25)] transition-colors hover:text-band-ink hover:shadow-[inset_0_0_0_1.5px_rgb(255_255_255/0.6)]"
+    >
+      <Icon key={choice} className="rise-in size-4" /> <span className="hidden md:inline">{choice === "system" ? "Auto" : label}</span>
+    </button>
   );
 }
 
@@ -141,7 +191,7 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-line bg-card p-5 shadow-sm">
+      <section className="panel p-5">
         <label className="label" htmlFor="paste">Recipe text</label>
         <textarea
           id="paste"
@@ -171,9 +221,9 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
             </button>
           </div>
         </div>
-        {error && <p role="alert" className="mt-3 rounded-md bg-tomato/10 p-3 text-sm text-tomato">{error}</p>}
+        {error && <p role="alert" className="mt-3 rounded-md bg-alert/10 p-3 text-sm font-semibold text-alert">{error}</p>}
         {!text && !drafts.length && (
-          <button type="button" className="mt-3 text-sm text-ink-soft underline hover:text-tomato" onClick={() => setText(SAMPLE)}>
+          <button type="button" className="mt-3 text-sm text-ink-soft underline hover:text-sign" onClick={() => setText(SAMPLE)}>
             Try a sample recipe
           </button>
         )}
@@ -182,7 +232,7 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
       {drafts.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-xl font-semibold">Check it over ({drafts.length})</h2>
+            <h2 className="sign-type text-xl">Check it over ({drafts.length})</h2>
             {drafts.length > 1 && (
               <button type="button" className="btn inline-flex h-10 items-center rounded-md px-4 text-sm font-semibold" onClick={() => { onSave(drafts); setDrafts([]); setText(""); setUrl(""); }}>
                 Save all {drafts.length}
@@ -237,7 +287,7 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
     );
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
       <aside className="space-y-3">
         <div className="relative">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" />
@@ -248,15 +298,15 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
           {tags.map((t) => <Chip key={t} on={tag === t} onClick={() => setTag(tag === t ? "" : t)}>{t}</Chip>)}
         </div>
         <ul className="space-y-1.5">
-          {shown.map((r) => (
-            <li key={r.id}>
+          {shown.map((r, i) => (
+            <li key={r.id} className="rise-in" style={{ "--i": i } as React.CSSProperties}>
               <button
                 type="button"
                 onClick={() => { setOpenId(r.id); setEditing(false); }}
-                className={cn("w-full rounded-lg border border-transparent px-3 py-2 text-left hover:bg-card", open?.id === r.id && "border-line bg-card shadow-sm")}
+                className={cn("w-full rounded-[6px] border-2 border-transparent px-3 py-2 text-left transition-colors hover:bg-card", open?.id === r.id && "border-sign bg-card")}
               >
                 <span className="flex items-center gap-1.5 font-semibold">
-                  {r.favorite && <Heart className="size-3.5 shrink-0 fill-tomato text-tomato" />}
+                  {r.favorite && <Heart className="size-3.5 shrink-0 fill-sign text-sign" />}
                   <span className="truncate">{r.title}</span>
                 </span>
                 <span className="text-xs text-ink-faint">
@@ -294,7 +344,7 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" aria-pressed={on} onClick={onClick} className={cn("inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-semibold text-ink-soft", on && "border-tomato bg-tomato text-white")}>
+    <button type="button" aria-pressed={on} onClick={onClick} className={cn("inline-flex items-center gap-1 rounded-[4px] border-2 border-line px-2.5 py-0.5 text-xs font-semibold text-ink-soft transition-colors hover:border-sign", on && "border-tag bg-tag text-tag-ink")}>
       {children}
     </button>
   );
