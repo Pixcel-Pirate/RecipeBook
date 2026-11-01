@@ -7,17 +7,17 @@ related_targets: ["src/components/planner.tsx","src/components/recipe.tsx"]
 
 # App shell (all tabs)
 
-Scope: the whole Recipe Book app (Import, Recipes, Planner, Shopping). Mode: Operate.
+Scope: the whole Recipe Book app (Import, Recipes, Planner, Shopping) plus the new per-recipe grocery checklist. Mode: Operate.
 Audience and job: home cooks collecting recipes, planning the week at a desk, shopping from a phone in the store.
-Constraints: offline, strict CSP, light and dark theme with a System/Light/Dark setting, reduced motion respected.
-Unresolved: pixcel was offered Grocery aisle / Enamelware / Polish current; building Grocery aisle until they answer.
+Constraints: offline, strict CSP, light and dark theme with Auto/Light/Dark, reduced motion respected.
+Pinned by pixcel (2026-11-01): "more futuristic and sleek and modern"; replaces the grocery-aisle world.
 
 ## Direction contract
 
-THESIS: The weekly loop is a trip through a grocery store. The app refuses the cream-paper-and-serif recipe-blog default and the grey SaaS dashboard.
-OWN-WORLD: Store signage. Bright tile-white ground, deep aisle-sign green for the shell and primary actions, shelf-tag yellow for highlights and selection, produce red only for destructive and errors. Archivo (variable width) set wide and bold for signs and headings, normal width for body. Square-ish 6px corners, 2px rules, tags with a punched hole. Dark: the store after hours, green-black ground, yellow tags stay lit.
-STORY: The visitor sees their book, plans the week, then walks the aisles of a list that is already sorted the way the store is.
-FIRST VIEWPORT: A green sign-band header with the name and section tabs as aisle signs; the active tab drops down like a hanging sign. Below, the section's work area on the white ground.
-FORM: Grocery aisle signage, candidate 3 of 7. seed:1c732d99d9844f7e
-SIGNATURE: Shopping list aisle groups headed by hanging aisle signs with a number; checking an item strikes it like a scanned price tag. Planner days are shelf-edge labels.
+THESIS: A recipe book that feels like an indoor vertical farm: clean, lit, precise. It refuses the cream-and-serif recipe blog, last round's store signage, and the neon-on-black sci-fi costume.
+OWN-WORLD: Grow-room. Cool frosted white ground and white racks (surfaces), graphite ink, hairline 1px rules, 12px corners. Grow-light violet (#6d4aff) for primary action and selection, with one violet-to-magenta "grow strip" used only for progress. Leaf green for "have it", violet for "got it". Geist for UI, Geist Mono for quantities and counts. Dark: the farm at night, graphite racks, violet light brighter.
+STORY: Open a recipe and its grocery list is right there; mark what you already have and what you just bought, plan the week, shop the merged list.
+FIRST VIEWPORT: A frosted sticky top bar: name left, segmented section control center/right with a sliding pill, theme control. Below, the work area; on Recipes, the open recipe leads with its grocery panel and grow strip.
+FORM: Vertical farm grow-room, candidate 7 of 7 (brief-pinned feel: futuristic, sleek). seed:97b5ecefe680295b
+SIGNATURE: The grow strip: a thin violet-to-magenta light bar that fills as grocery items are marked have/got, on the recipe grocery panel and the shopping list. The segmented control's pill glides between sections.
 FINISH: unreviewed and undocumented is unfinished; the run ends after the finish review and the documenter.

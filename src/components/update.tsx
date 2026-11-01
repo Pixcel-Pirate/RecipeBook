@@ -43,7 +43,7 @@ export function UpdatePrompt() {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="shelf-tag sign-type inline-flex h-9 items-center gap-2 pr-2.5 text-sm sm:pr-3">
+      <button type="button" onClick={() => setOpen(true)} className="chip inline-flex h-9 gap-2 px-3 text-sm font-medium">
         <Download className="size-4" /> <span className="sr-only sm:not-sr-only">Update ready</span>
       </button>
       {open && (
@@ -55,8 +55,8 @@ export function UpdatePrompt() {
           </p>
           {error && <p role="alert" className="mt-3 text-sm font-semibold text-alert">{error}</p>}
           <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <button type="button" disabled={busy} className="btn-soft inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-semibold disabled:opacity-50" onClick={() => setOpen(false)}>Not now</button>
-            <button type="button" disabled={busy} className="btn inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold disabled:opacity-70" onClick={go}>
+            <button type="button" disabled={busy} className="btn-soft inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-semibold disabled:opacity-50" onClick={() => setOpen(false)}>Not now</button>
+            <button type="button" disabled={busy} className="btn inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold disabled:opacity-70" onClick={go}>
               <RefreshCw className={busy ? "size-4 animate-spin" : "size-4"} /> {busy ? "Updating…" : "Update and restart"}
             </button>
           </div>

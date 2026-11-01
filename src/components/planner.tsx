@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const uid = () => globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
 export const today = () => ymd(new Date());
 const label = (s: string, opts: Intl.DateTimeFormatOptions) => parseYmd(s).toLocaleDateString(undefined, opts);
-const MEAL_DOT: Record<Meal, string> = { breakfast: "bg-tag", lunch: "bg-sign/45", dinner: "bg-sign", snack: "bg-ink-faint" };
+const MEAL_DOT: Record<Meal, string> = { breakfast: "bg-accent-soft", lunch: "bg-accent/45", dinner: "bg-accent", snack: "bg-ink-faint" };
 
 /** Native <dialog>: Esc and the backdrop close it, focus is trapped for free. */
 export function Dialog({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
@@ -21,7 +21,7 @@ export function Dialog({ title, onClose, children }: { title: string; onClose: (
       className="m-auto w-[min(32rem,calc(100vw-2rem))] panel p-0 text-ink backdrop:bg-ink/40"
     >
       <div className="flex items-center justify-between border-b border-line px-5 py-3">
-        <h2 className="sign-type text-lg">{title}</h2>
+        <h2 className="display text-lg">{title}</h2>
         <button type="button" aria-label="Close" className="rounded p-1 hover:text-alert" onClick={() => ref.current?.close()}><X className="size-5" /></button>
       </div>
       <div className="p-5">{children}</div>
@@ -46,8 +46,8 @@ function WhenFields({ date, meal, setDate, setMeal }: { date: string; meal: Meal
   );
 }
 
-const primary = "btn inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold";
-const soft = "btn-soft inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold whitespace-nowrap";
+const primary = "btn inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold";
+const soft = "btn-soft inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold whitespace-nowrap";
 
 export function PlanDialog({ title, servings, onPlan, onClose }: { title: string; servings: number; onPlan: (date: string, meal: Meal, servings: number) => void; onClose: () => void }) {
   const [date, setDate] = useState(today());
@@ -81,7 +81,7 @@ function AddDialog({ date, recipes, onAdd, onClose }: { date: string; recipes: R
         <ul className="max-h-64 space-y-1 overflow-y-auto">
           {shown.map((r) => (
             <li key={r.id}>
-              <button type="button" className="w-full rounded-md px-3 py-2 text-left hover:bg-sign/10" onClick={() => onAdd({ date: d, meal, recipeId: r.id, servings: r.servings || 2 })}>
+              <button type="button" className="w-full rounded-lg px-3 py-2 text-left hover:bg-accent/10" onClick={() => onAdd({ date: d, meal, recipeId: r.id, servings: r.servings || 2 })}>
                 <span className="font-semibold">{r.title}</span>
                 {r.servings > 0 && <span className="ml-2 text-xs text-ink-faint">serves {r.servings}</span>}
               </button>
@@ -152,10 +152,10 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
         <div className="flex items-center gap-1">
           <button type="button" className={cn(soft, "px-2.5")} aria-label="Previous week" onClick={() => setStart(addDays(start, -7))}><ChevronLeft className="size-4" /></button>
           <button type="button" className={cn(soft, "px-2.5")} aria-label="Next week" onClick={() => setStart(addDays(start, 7))}><ChevronRight className="size-4" /></button>
-          <h2 className="ml-2 sign-type text-xl">
+          <h2 className="ml-2 display text-xl">
             {label(start, { month: "short", day: "numeric" })} to {label(end, { month: "short", day: "numeric", year: "numeric" })}
           </h2>
-          {start !== weekStart(now) && <button type="button" className="ml-2 text-sm underline hover:text-sign" onClick={() => setStart(weekStart(now))}>This week</button>}
+          {start !== weekStart(now) && <button type="button" className="ml-2 text-sm underline hover:text-accent" onClick={() => setStart(weekStart(now))}>This week</button>}
         </div>
         <button type="button" className={primary} onClick={() => onShop(start, end)}><ShoppingBasket className="size-4" /> Shopping list for this week</button>
       </div>
@@ -164,11 +164,11 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
         {days.map((d, i) => {
           const items = kitchen.plan.filter((p) => p.date === d);
           return (
-            <section key={`${d}`} className={cn("panel rise-in flex min-h-24 flex-col p-2.5 md:min-h-40", d === now && "border-sign")} style={{ "--i": i } as React.CSSProperties}>
+            <section key={`${d}`} className={cn("panel rise-in flex min-h-24 flex-col p-2.5 md:min-h-40", d === now && "border-accent")} style={{ "--i": i } as React.CSSProperties}>
               {/* Shelf-edge label: today is lit green. */}
-              <h3 className={cn("shelf-tag flex items-baseline justify-between gap-1 py-1 pr-2 text-sm", d === now && "bg-sign text-sign-ink")}>
-                <span className="sign-type">{label(d, { weekday: "short" })}</span>
-                <span className="tabular text-xs font-semibold opacity-80">{label(d, { month: "short", day: "numeric" })}</span>
+              <h3 className={cn("flex items-baseline justify-between gap-1 border-b border-line px-1 pb-2 text-sm", d === now && "text-accent")}>
+                <span className="display">{label(d, { weekday: "short" })}</span>
+                <span className="tabular text-xs text-ink-faint">{label(d, { month: "short", day: "numeric" })}</span>
               </h3>
               <div className="mt-2 flex-1 space-y-2">
                 {MEALS.map((m) => {
@@ -178,7 +178,7 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
                       key={m}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); move(e.dataTransfer.getData("text/plan-item"), d, m); }}
-                      className={cn("rounded-md", !here.length && "hidden md:block md:min-h-2")}
+                      className={cn("rounded-lg", !here.length && "hidden md:block md:min-h-2")}
                     >
                       {here.length > 0 && <p className="flex items-center gap-1.5 px-1 text-xs font-semibold tracking-wide text-ink-soft uppercase"><span className={cn("size-2 rounded-[2px]", MEAL_DOT[m])} />{m}</p>}
                       {here.map((p) => {
@@ -190,7 +190,7 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
                             draggable
                             onDragStart={(e) => e.dataTransfer.setData("text/plan-item", p.id)}
                             onClick={() => setEditing(p)}
-                            className={cn("w-full border-b-2 border-line/70 px-1 py-1.5 text-left text-sm leading-snug transition-colors last:border-0 hover:text-sign active:cursor-grabbing", !r && "italic text-ink-soft")}
+                            className={cn("w-full border-b border-line/70 px-1 py-1.5 text-left text-sm leading-snug transition-colors last:border-0 hover:text-accent active:cursor-grabbing", !r && "italic text-ink-soft")}
                           >
                             {r?.title ?? p.note ?? "Removed recipe"}
                             {r && <span className="block text-xs text-ink-faint">serves {p.servings}</span>}
@@ -201,7 +201,7 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
                   );
                 })}
               </div>
-              <button type="button" className="mt-2 inline-flex items-center justify-center gap-1 rounded-md py-1.5 text-sm text-ink-soft hover:bg-sign/10 hover:text-sign" onClick={() => setAdding(d)}>
+              <button type="button" className="mt-2 inline-flex items-center justify-center gap-1 rounded-lg py-1.5 text-sm text-ink-soft hover:bg-accent/10 hover:text-accent" onClick={() => setAdding(d)}>
                 <Plus className="size-4" /> Add
               </button>
             </section>
@@ -271,7 +271,10 @@ export function ShoppingView({ recipes, kitchen, setKitchen, range }: {
           <label className="label" htmlFor="shop-to">To</label>
           <input id="shop-to" type="date" className="field" value={to} min={from} onChange={(e) => e.target.value && setRange([from, e.target.value])} />
         </div>
-        <p className="pb-2 text-sm text-ink-soft">{left.length} to buy{lines.length > left.length && `, ${lines.length - left.length} in the cart`}</p>
+        <div className="min-w-40 flex-1 pb-2">
+          <p className="tabular text-sm text-ink-soft">{left.length} to buy{lines.length > left.length && `, ${lines.length - left.length} in the cart`}</p>
+          {lines.length > 0 && <div className="grow-strip mt-1.5" style={{ "--p": (lines.length - left.length) / lines.length } as React.CSSProperties} />}
+        </div>
         <div className="ml-auto flex flex-wrap gap-2">
           <button
             type="button"
@@ -281,7 +284,7 @@ export function ShoppingView({ recipes, kitchen, setKitchen, range }: {
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />} {copied ? "Copied" : "Copy"}
           </button>
           {kitchen.checked.length > 0 && <button type="button" className={soft} onClick={() => setKitchen({ ...kitchen, checked: [] })}>Uncheck all</button>}
-          {lines.length > 0 && <button type="button" aria-pressed={moving} className={cn(soft, "sm:hidden", moving && "bg-tag text-tag-ink")} onClick={() => setMoving(!moving)}>{moving ? "Done" : "Move items"}</button>}
+          {lines.length > 0 && <button type="button" aria-pressed={moving} className={cn(soft, "sm:hidden", moving && "bg-accent-soft text-accent-strong")} onClick={() => setMoving(!moving)}>{moving ? "Done" : "Move items"}</button>}
         </div>
       </div>
 
@@ -291,7 +294,7 @@ export function ShoppingView({ recipes, kitchen, setKitchen, range }: {
       </form>
 
       {!lines.length && (
-        <div className="rounded-[6px] border-2 border-dashed border-line p-10 text-center text-ink-soft">
+        <div className="rounded-xl border border-dashed border-line p-10 text-center text-ink-soft">
           <ShoppingBasket className="mx-auto size-9 text-ink-faint" />
           <p className="mt-2">Nothing planned for these days. Add meals in the planner and their ingredients show up here.</p>
         </div>
@@ -302,31 +305,27 @@ export function ShoppingView({ recipes, kitchen, setKitchen, range }: {
         const leftHere = ls.filter((l) => !checked.has(l.key)).length;
         return (
           <section key={aisle} className="rise-in" style={{ "--i": g } as React.CSSProperties}>
-            {/* Aisle sign hung on two wires above its shelf of items. */}
-            <div aria-hidden className="mx-auto flex h-3 w-[70%] justify-between px-6">
-              <span className="w-0.5 bg-ink-faint/60" /><span className="w-0.5 bg-ink-faint/60" />
-            </div>
-            <h3 className={cn("flex items-center gap-3 rounded-[6px] bg-sign px-3 py-2 text-sign-ink shadow-[0_6px_12px_-8px_rgb(0_0_0/0.5)] transition-opacity", !leftHere && "opacity-60")}>
-              <span className="sign-type tabular grid h-8 min-w-8 place-items-center rounded-[4px] bg-tag px-1.5 text-lg text-tag-ink">{n || "·"}</span>
-              <span className="sign-type flex-1 text-base tracking-wide uppercase">{aisle}</span>
-              <span className="tabular text-sm font-semibold opacity-85">{leftHere ? `${leftHere} left` : "Done"}</span>
+            <h3 className={cn("flex items-center gap-3 px-1 pb-2 transition-opacity", !leftHere && "opacity-55")}>
+              <span className="tabular grid size-7 place-items-center rounded-lg bg-accent-soft text-sm font-semibold text-accent-strong">{n || "·"}</span>
+              <span className="display flex-1 text-base">{aisle}</span>
+              <span className="tabular text-xs text-ink-faint">{leftHere ? `${leftHere} left` : "Done"}</span>
             </h3>
-            <div className="panel mt-2">
+            <div className="panel">
             <ul>
               {ls.map((l) => {
                 const done = checked.has(l.key);
                 return (
-                  <li key={l.key} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b-2 border-line/70 px-4 py-2.5 last:border-0">
-                    <input id={`c-${l.key}`} type="checkbox" className="size-5 shrink-0 accent-sign" checked={done} onChange={() => toggle(l.key)} />
+                  <li key={l.key} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line/70 px-4 py-2.5 last:border-0">
+                    <input id={`c-${l.key}`} type="checkbox" className="size-5 shrink-0 accent-accent" checked={done} onChange={() => toggle(l.key)} />
                     <label htmlFor={`c-${l.key}`} className={cn("min-w-0 flex-1 basis-48 cursor-pointer transition-colors", done && "text-ink-faint")}>
                       <span className="strike" data-done={done}>
-                        <span className={cn("tabular font-bold", !done && "text-sign")}>{[l.amount, l.unit].filter(Boolean).join(" ")}</span> {l.label}
+                        <span className={cn("tabular font-bold", !done && "text-accent")}>{[l.amount, l.unit].filter(Boolean).join(" ")}</span> {l.label}
                       </span>
                       {l.recipes.length > 1 && <span className="block truncate text-xs text-ink-faint">For {l.recipes.join(", ")}</span>}
                     </label>
                     <select
                       aria-label={`Aisle for ${l.name}`}
-                      className={cn("ml-8 rounded-[4px] border-2 border-line bg-field py-0.5 pr-1 pl-1.5 text-xs font-semibold text-ink-soft transition-colors hover:border-sign sm:ml-0 sm:block", !moving && "hidden")}
+                      className={cn("ml-8 rounded-lg border border-line bg-field py-0.5 pr-1 pl-1.5 text-xs font-semibold text-ink-soft transition-colors hover:border-accent sm:ml-0 sm:block", !moving && "hidden")}
                       value={l.aisle}
                       onChange={(e) => setAisle(l.key, l.name, e.target.value)}
                     >

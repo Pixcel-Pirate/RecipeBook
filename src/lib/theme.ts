@@ -17,7 +17,7 @@ export function storedTheme(): ThemeChoice {
 export function applyTheme(choice: ThemeChoice) {
   const mode = choice === "system" ? (dark().matches ? "dark" : "light") : choice;
   document.documentElement.dataset.theme = mode;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", mode === "dark" ? "#08271a" : "#0b4a30");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", mode === "dark" ? "#07080b" : "#f3f4f7");
 }
 
 export function useTheme() {
