@@ -112,9 +112,10 @@ function Tabs({ tabs, tab, setTab }: { tabs: readonly (readonly [Tab, string, st
     };
     place();
     const ro = new ResizeObserver(place);
-    if (nav.current) ro.observe(nav.current);
+    // Watch the buttons too: a label or font swap can resize them without resizing the nav.
+    if (nav.current) [nav.current, ...nav.current.querySelectorAll("button")].forEach((el) => ro.observe(el));
     return () => ro.disconnect();
-  }, [tab, tabs]);
+  }, [tab]);
   return (
     <nav ref={nav} className="relative order-last flex w-full rounded-full bg-raised p-1 ring-1 ring-line md:order-none md:mx-auto md:w-auto" aria-label="Sections">
       {pill && (

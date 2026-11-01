@@ -165,7 +165,7 @@ export function PlannerView({ recipes, kitchen, setKitchen, onOpenRecipe, onShop
           const items = kitchen.plan.filter((p) => p.date === d);
           return (
             <section key={`${d}`} className={cn("panel rise-in flex min-h-24 flex-col p-2.5 md:min-h-40", d === now && "border-accent")} style={{ "--i": i } as React.CSSProperties}>
-              {/* Shelf-edge label: today is lit green. */}
+              {/* Day heading: today is in the accent colour. */}
               <h3 className={cn("flex items-baseline justify-between gap-1 border-b border-line px-1 pb-2 text-sm", d === now && "text-accent")}>
                 <span className="display">{label(d, { weekday: "short" })}</span>
                 <span className="tabular text-xs text-ink-faint">{label(d, { month: "short", day: "numeric" })}</span>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CalendarPlus, Check, ListChecks, Clock, Copy, Download, Heart, Minus, Pencil, Plus, Trash2, Users, X } from "lucide-react";
 import { PlanDialog } from "@/components/planner";
-import { baseName, cleanName, type Meal, scaleIngredient } from "@/lib/plan";
+import { cleanName, type Meal, scaleIngredient } from "@/lib/plan";
 import { ingredientLine, minutes, parseIngredient, type Recipe, toMarkdown } from "@/lib/recipe";
 import { cn, useStored } from "@/lib/utils";
 
@@ -223,7 +223,7 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
 function GroceryList({ recipe: r, factor }: { recipe: Recipe; factor: number }) {
   const [haveAll, setHaveAll] = useStored<Record<string, string[]>>("recipe-book-have", () => ({}));
   const have = new Set(haveAll[r.id] ?? []);
-  const items = r.ingredients.map((ing) => scaleIngredient(ing, factor)).map((i) => ({ ...i, key: baseName(i.name) || i.name }));
+  const items = r.ingredients.map((ing) => scaleIngredient(ing, factor)).filter((i) => i.name.trim()).map((i) => ({ ...i, key: i.name.trim().toLowerCase() }));
   const got = items.filter((i) => have.has(i.key)).length;
   const save = (keys: string[]) => setHaveAll({ ...haveAll, [r.id]: keys });
   const toggle = (k: string) => save(have.has(k) ? [...have].filter((x) => x !== k) : [...have, k]);

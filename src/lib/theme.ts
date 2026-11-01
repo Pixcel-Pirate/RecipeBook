@@ -17,7 +17,11 @@ export function storedTheme(): ThemeChoice {
 export function applyTheme(choice: ThemeChoice) {
   const mode = choice === "system" ? (dark().matches ? "dark" : "light") : choice;
   document.documentElement.dataset.theme = mode;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", mode === "dark" ? "#07080b" : "#f3f4f7");
+  // index.html ships a light and a dark meta for first paint; after that both follow the chosen theme.
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+    m.removeAttribute("media");
+    m.setAttribute("content", mode === "dark" ? "#07080b" : "#f3f4f7");
+  });
 }
 
 export function useTheme() {
