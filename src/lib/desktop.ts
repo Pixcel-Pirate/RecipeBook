@@ -1,4 +1,4 @@
-import { app, init, updater } from "@neutralinojs/lib";
+import { app, init, os } from "@neutralinojs/lib";
 
 /** The Windows app serves the page from its own local server on this address. */
 export const DESKTOP = location.hostname === "127.0.0.1";
@@ -20,10 +20,19 @@ export function connectDesktop() {
   return connecting;
 }
 
-/** Downloads the new app files named in the update manifest, then relaunches on them. */
-export async function installDesktopUpdate(manifestUrl: string) {
+/**
+ * Same as Stancebook: download the release's installer to %TEMP%, start it silently (/S) and quit.
+ * The installer waits for the app to close, replaces the program and its files, and reopens it on the new version.
+ * Recipes, plan and lists live in the app's storage, which the installer doesn't touch.
+ */
+export async function installDesktopUpdate(tag: string) {
+  if (!/^v\d{4}\.\d{2}\.\d{2}(\.\d+)?$/.test(tag)) throw new Error("unexpected version");
   await connectDesktop();
-  await updater.checkForUpdates(manifestUrl);
-  await updater.install();
-  await app.restartProcess();
+  const exe = `"%TEMP%\\RecipeImporter-Setup.exe"`;
+  const url = `https://github.com/Pixcel-Pirate/RecipeBook/releases/download/${tag}/RecipeImporter-Setup.exe`;
+  // curl.exe ships with Windows 10 and 11; -f fails on a bad download instead of saving an error page
+  const r = await os.execCommand(`cmd /c curl.exe -fsSL --retry 2 -o ${exe} "${url}"`);
+  if (r.exitCode !== 0) throw new Error(r.stdErr || "download failed");
+  await os.execCommand(`cmd /c start "" ${exe} /S`, { background: true });
+  await app.exit();
 }

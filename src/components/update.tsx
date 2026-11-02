@@ -7,9 +7,9 @@ import { DESKTOP, installDesktopUpdate } from "@/lib/desktop";
 // raw.githubusercontent.com allows cross-origin reads, which the desktop app needs to download the update.
 const MANIFEST = (import.meta.env.VITE_UPDATE_MANIFEST as string | undefined) ?? "https://raw.githubusercontent.com/Pixcel-Pirate/RecipeBook/gh-pages/update.json";
 const VERSION = import.meta.env.VITE_VERSION as string | undefined;
-/** Desktop: swap in the new app files and restart. Web: drop the offline cache and reload. */
-async function install() {
-  if (DESKTOP) return installDesktopUpdate(`${MANIFEST}?t=${Date.now()}`);
+/** Desktop: run the new installer silently, which reopens the app. Web: drop the offline cache and reload. */
+async function install(tag: string) {
+  if (DESKTOP) return installDesktopUpdate(tag);
   if ("caches" in window) await Promise.all((await caches.keys()).map((k) => caches.delete(k)));
   location.reload();
 }
@@ -34,7 +34,7 @@ export function UpdatePrompt() {
     setBusy(true);
     setError("");
     try {
-      await install();
+      await install(latest);
     } catch {
       setBusy(false);
       setError("The update didn't download. Check your internet connection and try again.");

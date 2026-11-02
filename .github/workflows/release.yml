@@ -36,18 +36,7 @@ jobs:
           cp /tmp/neu/dist/RecipeImporter/RecipeImporter-win_x64.exe RecipeImporter.exe
           cp /tmp/neu/dist/RecipeImporter/resources.neu .
           cp $GITHUB_WORKSPACE/desktop-lite/installer.nsi $GITHUB_WORKSPACE/desktop-lite/icon.ico .
-          makensis -V2 installer.nsi
-
-      - name: Deploy web app to gh-pages
-        run: |
-          cp -r dist /tmp/site && cd /tmp/site && touch .nojekyll
-          # The app's update prompt reads update.json; the desktop updater downloads desktop/resources.neu.
-          mkdir desktop && cp /tmp/inst/resources.neu desktop/
-          RAW="https://raw.githubusercontent.com/${{ github.repository }}/gh-pages"
-          printf '{"applicationId":"app.recipeimporter.desktop","version":"%s","resourcesURL":"%s/desktop/resources.neu?v=%s"}\n' "$TAG" "$RAW" "$TAG" > update.json
-          git init -qb gh-pages && git add -A
-          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "Deploy $TAG"
-          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" gh-pages
+          makensis -V2 -DVERSION=$TAG installer.nsi
 
       - name: Publish release
         env: { GH_TOKEN: "${{ github.token }}" }
@@ -55,3 +44,15 @@ jobs:
           [ "${GITHUB_REF_TYPE}" = tag ] || { git tag "$TAG"; git push origin "$TAG"; }
           NOTES=RELEASE_NOTES.md; [ -f $NOTES ] || NOTES=/dev/null
           gh release create "$TAG" /tmp/inst/RecipeImporter-Setup.exe --title "Recipe Book $TAG" --notes-file $NOTES --generate-notes
+
+      - name: Deploy web app to gh-pages
+        run: |
+          cp -r dist /tmp/site && cd /tmp/site && touch .nojekyll
+          # The app's update prompt reads update.json, then the desktop app installs the release's installer silently.
+          # desktop/resources.neu is kept for installs from v2026.10.25 and v2026.11.02, which update by swapping that file.
+          mkdir desktop && cp /tmp/inst/resources.neu desktop/
+          RAW="https://raw.githubusercontent.com/${{ github.repository }}/gh-pages"
+          printf '{"applicationId":"app.recipeimporter.desktop","version":"%s","resourcesURL":"%s/desktop/resources.neu?v=%s"}\n' "$TAG" "$RAW" "$TAG" > update.json
+          git init -qb gh-pages && git add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "Deploy $TAG"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" gh-pages
