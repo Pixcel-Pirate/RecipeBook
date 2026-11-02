@@ -1,45 +1,53 @@
 @import "tailwindcss";
 
-/* Grocery-aisle world: tile-white floor, aisle-sign green, shelf-tag yellow. Dark = the store after hours. */
+/* Grow-room world: frosted white racks, graphite ink, grow-light violet. Dark = the farm at night. */
 @theme {
-  --color-bg: #fbfcfa;
+  --color-bg: #f3f4f7;
   --color-card: #ffffff;
+  --color-raised: #f7f8fa;
   --color-field: #ffffff;
-  --color-ink: #13221a;
-  --color-ink-soft: #3f5247;
-  --color-ink-faint: #5f7166;
-  --color-line: #d6ddd7;
-  --color-sign: #0d5c3b;
-  --color-sign-hi: #0f6e46;
-  --color-sign-ink: #ffffff;
-  --color-band: #0b4a30;
-  --color-band-ink: #e9f5ee;
-  --color-tag: #ffd23f;
-  --color-tag-ink: #241c00;
-  --color-alert: #b8261c;
+  --color-bar: rgb(255 255 255 / 0.72);
+  --color-ink: #0c0e13;
+  --color-ink-soft: #485061;
+  --color-ink-faint: #667085;
+  --color-line: #e2e5eb;
+  --color-accent: #6d4aff;
+  --color-accent-hi: #7c5cff;
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: #efeaff;
+  --color-accent-strong: #4b2fd6;
+  --color-leaf: #0e8f55;
+  --color-leaf-soft: #e3f6ec;
+  --color-alert: #d0281c;
 
-  --font-display: "Archivo Variable", "Segoe UI", system-ui, sans-serif;
-  --font-sans: "Archivo Variable", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Geist Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Geist Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "Cascadia Mono", monospace;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --grow: linear-gradient(90deg, #6d4aff, #b14bff 60%, #ff4fd8);
 }
 
-/* Dark tokens, used for "Dark" and for "System" when the OS is dark. */
+/* Dark tokens, used for "Dark" and for "Auto" when the device is dark. */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-bg: #0b130f;
-  --color-card: #121e18;
-  --color-field: #0e1813;
-  --color-ink: #e6eee8;
-  --color-ink-soft: #b3c3b9;
-  --color-ink-faint: #8fa297;
-  --color-line: #26362d;
-  --color-sign: #46c486;
-  --color-sign-hi: #5fd69a;
-  --color-sign-ink: #04130b;
-  --color-band: #08271a;
-  --color-band-ink: #d7eee0;
-  --color-alert: #ff7a6b;
+  --color-bg: #07080b;
+  --color-card: #101218;
+  --color-raised: #161921;
+  --color-field: #0c0e13;
+  --color-bar: rgb(10 11 15 / 0.72);
+  --color-ink: #eef0f5;
+  --color-ink-soft: #a8afbe;
+  --color-ink-faint: #858d9e;
+  --color-line: #232733;
+  --color-accent: #9b85ff;
+  --color-accent-hi: #ad9bff;
+  --color-accent-ink: #0d0a22;
+  --color-accent-soft: #221c45;
+  --color-accent-strong: #c9bdff;
+  --color-leaf: #3fd68a;
+  --color-leaf-soft: #10291d;
+  --color-alert: #ff7466;
 }
 :root {
   color-scheme: light;
@@ -57,18 +65,17 @@
     font-family: var(--font-sans);
     color: var(--color-ink);
     background: var(--color-bg);
-    caret-color: var(--color-sign);
+    caret-color: var(--color-accent);
   }
   button:not(:disabled) {
     cursor: pointer;
   }
   :focus-visible {
-    outline: 2px solid var(--color-sign);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
   ::selection {
-    background: var(--color-tag);
-    color: var(--color-tag-ink);
+    background: color-mix(in oklab, var(--color-accent) 30%, transparent);
   }
   a {
     text-underline-offset: 0.2em;
@@ -79,32 +86,33 @@
 }
 
 @layer components {
-  /* Store-sign lettering: wide and heavy. */
-  .sign-type {
+  .display {
     font-family: var(--font-display);
-    font-stretch: 118%;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-weight: 650;
+    letter-spacing: -0.025em;
   }
   .tabular {
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
   .btn {
-    background: var(--color-sign);
-    color: var(--color-sign-ink);
-    transition: background-color 0.15s, transform 0.12s var(--ease-out);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.18) inset, 0 6px 16px -8px color-mix(in oklab, var(--color-accent) 70%, transparent);
+    transition: background-color 0.15s, transform 0.12s var(--ease-out), box-shadow 0.2s;
   }
   .btn:hover {
-    background: var(--color-sign-hi);
+    background: var(--color-accent-hi);
   }
   .btn-soft {
-    background: transparent;
+    background: var(--color-card);
     color: var(--color-ink);
-    box-shadow: inset 0 0 0 2px var(--color-line);
-    transition: box-shadow 0.15s, color 0.15s, transform 0.12s var(--ease-out);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    transition: box-shadow 0.15s, color 0.15s, background-color 0.15s, transform 0.12s var(--ease-out);
   }
   .btn-soft:hover {
-    box-shadow: inset 0 0 0 2px var(--color-sign);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 55%, var(--color-line));
   }
   .btn:active:not(:disabled),
   .btn-soft:active:not(:disabled) {
@@ -112,58 +120,68 @@
   }
   .field {
     width: 100%;
-    border-radius: 6px;
-    border: 2px solid var(--color-line);
+    border-radius: 10px;
+    border: 1px solid var(--color-line);
     background: var(--color-field);
     padding: 0.5rem 0.75rem;
     color: var(--color-ink);
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   .field::placeholder {
     color: var(--color-ink-faint);
   }
   .field:hover {
-    border-color: color-mix(in oklab, var(--color-sign) 45%, var(--color-line));
+    border-color: color-mix(in oklab, var(--color-accent) 40%, var(--color-line));
   }
   .field:focus {
-    outline: 2px solid var(--color-sign);
-    outline-offset: 0;
-    border-color: transparent;
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent);
   }
   .label {
     display: block;
-    margin-bottom: 0.25rem;
-    font-size: 0.8rem;
-    font-weight: 650;
+    margin-bottom: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 550;
     color: var(--color-ink-soft);
   }
   .panel {
-    border-radius: 6px;
-    border: 2px solid var(--color-line);
+    border-radius: 14px;
+    border: 1px solid var(--color-line);
     background: var(--color-card);
+    box-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 12px 32px -20px rgb(16 24 40 / 0.18);
+  }
+  :root[data-theme="dark"] .panel {
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
   }
 
-  /* Shelf-edge price tag: yellow strip with a punched hole on the left. */
-  .shelf-tag {
+  /* The grow strip: a light bar that fills as items are sorted. Set --p (0..1) inline. */
+  .grow-strip {
     position: relative;
-    background: var(--color-tag);
-    color: var(--color-tag-ink);
-    border-radius: 4px;
-    padding-left: 1.35rem;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-line);
+    overflow: hidden;
   }
-  .shelf-tag::before {
+  .grow-strip::after {
     content: "";
     position: absolute;
-    top: 50%;
-    left: 0.5rem;
-    width: 0.42rem;
-    height: 0.42rem;
-    border-radius: 50%;
-    translate: 0 -50%;
-    background: var(--color-card);
+    inset: 0;
+    background: var(--grow);
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+    transition: transform 0.5s var(--ease-out);
+    border-radius: inherit;
   }
 
-  /* Checking an item off draws a line through it, like a scanned tag. */
+  /* Checked items get a line drawn through them. */
   .strike {
     position: relative;
     transition: color 0.2s;
@@ -171,10 +189,10 @@
   .strike::after {
     content: "";
     position: absolute;
-    left: -0.15rem;
-    right: -0.15rem;
+    left: -0.1rem;
+    right: -0.1rem;
     top: 0.68em;
-    height: 2px;
+    height: 1.5px;
     border-radius: 1px;
     background: currentColor;
     transform: scaleX(0);
@@ -189,29 +207,19 @@
     animation: dialog-in 0.32s var(--ease-out);
   }
   dialog[open]::backdrop {
+    backdrop-filter: blur(4px);
     animation: fade-in 0.25s ease-out;
   }
 }
 
 @keyframes dialog-in {
-  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  from { opacity: 0; transform: translateY(14px) scale(0.98); filter: blur(2px); }
 }
 @keyframes fade-in {
   from { opacity: 0; }
 }
 @keyframes fade-out {
   to { opacity: 0; }
-}
-/* The active section sign drops from the band and settles, like a sign hung on a hook. */
-@keyframes sign-drop {
-  0% { transform: translateY(-105%) rotate(0deg); }
-  60% { transform: translateY(0) rotate(-2.2deg); }
-  80% { transform: rotate(1deg); }
-  100% { transform: rotate(0deg); }
-}
-.sign-drop {
-  transform-origin: 50% 0;
-  animation: sign-drop 0.55s var(--ease-out);
 }
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(8px); }
@@ -229,14 +237,13 @@
 ::view-transition-new(work) {
   animation: 0.38s var(--ease-out) both rise-in;
 }
-/* Theme switch: a quick crossfade of the whole page. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.28s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  dialog[open], .rise-in, .sign-drop, ::view-transition-new(work) {
+  dialog[open], .rise-in, ::view-transition-new(work) {
     animation-name: fade-in;
   }
   .btn:active:not(:disabled), .btn-soft:active:not(:disabled) {

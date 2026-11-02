@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { CalendarPlus, Check, Clock, Copy, Download, Heart, Minus, Pencil, Plus, Trash2, Users, X } from "lucide-react";
+import { CalendarPlus, Check, ListChecks, Clock, Copy, Download, Heart, Minus, Pencil, Plus, Trash2, Users, X } from "lucide-react";
 import { PlanDialog } from "@/components/planner";
-import { type Meal, scaleIngredient } from "@/lib/plan";
+import { cleanName, type Meal, scaleIngredient } from "@/lib/plan";
 import { ingredientLine, minutes, parseIngredient, type Recipe, toMarkdown } from "@/lib/recipe";
-import { cn } from "@/lib/utils";
+import { cn, useStored } from "@/lib/utils";
 
 export function download(name: string, body: string, type = "application/json") {
   const a = document.createElement("a");
@@ -49,7 +49,7 @@ export function RecipeEditor({ recipe, onSave, onCancel, saveLabel = "Save" }: {
     >
       <div>
         <label className="label" htmlFor={`t-${r.id}`}>Title</label>
-        <input id={`t-${r.id}`} className="field sign-type text-lg" value={r.title} onChange={(e) => set({ title: e.target.value })} />
+        <input id={`t-${r.id}`} className="field display text-lg" value={r.title} onChange={(e) => set({ title: e.target.value })} />
       </div>
       <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr_1fr]">
         <div>
@@ -90,10 +90,10 @@ export function RecipeEditor({ recipe, onSave, onCancel, saveLabel = "Save" }: {
         </div>
       </div>
       <div className="flex justify-end gap-2">
-        <button type="button" className="btn-soft inline-flex h-10 items-center gap-2 rounded-md px-4 text-sm font-semibold" onClick={onCancel}>
+        <button type="button" className="btn-soft inline-flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-semibold" onClick={onCancel}>
           <X className="size-4" /> Cancel
         </button>
-        <button type="submit" className="btn inline-flex h-10 items-center gap-2 rounded-md px-4 text-sm font-semibold">
+        <button type="submit" className="btn inline-flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-semibold">
           <Check className="size-4" /> {saveLabel}
         </button>
       </div>
@@ -115,26 +115,28 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
   const [copied, setCopied] = useState(false);
   const [serves, setServes] = useState(r.servings);
   const [planning, setPlanning] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
   const factor = r.servings && serves ? serves / r.servings : 1;
   const isLink = /^https?:\/\//.test(r.source);
-  const iconBtn = "btn-soft inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold [&_svg]:size-4";
+  const iconBtn = "btn-soft inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold [&_svg]:size-4";
 
   return (
-    <article className="panel rise-in p-6">
+    <article className="panel rise-in p-4 sm:p-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="sign-type text-3xl">{r.title}</h2>
+          <h2 className="display text-3xl tracking-tight">{r.title}</h2>
           {r.source && (
             <p className="mt-1 text-sm text-ink-soft">
-              From {isLink ? <a className="underline hover:text-sign" href={r.source} target="_blank" rel="noreferrer">{host(r.source)}</a> : r.source}
+              From {isLink ? <a className="underline hover:text-accent" href={r.source} target="_blank" rel="noreferrer">{host(r.source)}</a> : r.source}
             </p>
           )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={iconBtn} onClick={onFavorite} aria-pressed={r.favorite} aria-label="Favorite">
-            <Heart className={cn(r.favorite && "fill-sign text-sign")} />
+            <Heart className={cn(r.favorite && "fill-accent text-accent")} />
           </button>
-          <button type="button" className="btn inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-semibold [&_svg]:size-4" onClick={() => setPlanning(true)}><CalendarPlus /> Plan</button>
+          <button type="button" className="btn inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold [&_svg]:size-4" onClick={() => setPlanning(true)}><CalendarPlus /> Plan</button>
+          <button type="button" className={cn(iconBtn, listOpen && "bg-accent-soft text-accent-strong")} aria-expanded={listOpen} onClick={() => setListOpen(!listOpen)}><ListChecks /> Grocery list</button>
           <button type="button" className={iconBtn} onClick={onEdit}><Pencil /> Edit</button>
           <button
             type="button"
@@ -152,14 +154,16 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
         </div>
       </header>
 
+      {listOpen && <GroceryList recipe={r} factor={factor} />}
+
       <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-soft">
         {r.servings > 0 && (
           <span className="inline-flex items-center gap-1.5">
             <Users className="size-4" /> Serves
-            <span className="inline-flex items-center rounded-[4px] border-2 border-line bg-field">
-              <button type="button" className="px-2 py-0.5 hover:text-sign" aria-label="Fewer servings" onClick={() => setServes(Math.max(1, serves - 1))}><Minus className="size-3.5" /></button>
+            <span className="inline-flex items-center rounded-lg border border-line bg-field">
+              <button type="button" className="px-2 py-0.5 hover:text-accent" aria-label="Fewer servings" onClick={() => setServes(Math.max(1, serves - 1))}><Minus className="size-3.5" /></button>
               <span className="min-w-6 text-center font-semibold text-ink" aria-live="polite">{serves}</span>
-              <button type="button" className="px-2 py-0.5 hover:text-sign" aria-label="More servings" onClick={() => setServes(serves + 1)}><Plus className="size-3.5" /></button>
+              <button type="button" className="px-2 py-0.5 hover:text-accent" aria-label="More servings" onClick={() => setServes(serves + 1)}><Plus className="size-3.5" /></button>
             </span>
             {serves !== r.servings && <button type="button" className="text-xs underline" onClick={() => setServes(r.servings)}>reset</button>}
           </span>
@@ -169,28 +173,28 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
       </div>
       {r.tags.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {r.tags.map((t) => <span key={t} className="shelf-tag py-0.5 pr-2 text-xs font-bold">{t}</span>)}
+          {r.tags.map((t) => <span key={t} className="chip px-2.5 py-0.5 text-xs font-medium">{t}</span>)}
         </div>
       )}
 
       <div className="mt-6 grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <section>
-          <h3 className="sign-type text-lg">Ingredients</h3>
+          <h3 className="display text-lg">Ingredients</h3>
           <ul className="mt-2 space-y-1.5">
             {r.ingredients.map((ing) => scaleIngredient(ing, factor)).map((i, n) => (
               <li key={n} className="flex gap-2 border-b border-line/70 pb-1.5">
-                <span className="tabular min-w-16 font-bold text-sign">{[i.amount, i.unit].filter(Boolean).join(" ")}</span>
+                <span className="tabular min-w-16 font-medium text-accent">{[i.amount, i.unit].filter(Boolean).join(" ")}</span>
                 <span>{i.name}</span>
               </li>
             ))}
           </ul>
         </section>
         <section>
-          <h3 className="sign-type text-lg">Steps</h3>
+          <h3 className="display text-lg">Steps</h3>
           <ol className="mt-2 space-y-3">
             {r.instructions.map((s, n) => (
               <li key={n} className="flex gap-3">
-                <span className="sign-type tabular grid size-7 shrink-0 place-items-center rounded-[4px] bg-tag text-sm text-tag-ink">{n + 1}</span>
+                <span className="display tabular grid size-7 shrink-0 place-items-center rounded-lg bg-accent-soft text-sm text-accent-strong">{n + 1}</span>
                 <p className="pt-0.5 leading-relaxed">{s}</p>
               </li>
             ))}
@@ -206,11 +210,50 @@ export function RecipeView({ recipe: r, onEdit, onDelete, onFavorite, onPlan }: 
         />
       )}
       {r.notes && (
-        <section className="mt-6 rounded-lg bg-sign/8 p-4">
-          <h3 className="sign-type text-sign">Notes</h3>
+        <section className="mt-6 rounded-lg bg-accent/8 p-4">
+          <h3 className="display text-accent">Notes</h3>
           <p className="mt-1 whitespace-pre-line text-sm leading-relaxed">{r.notes}</p>
         </section>
       )}
     </article>
+  );
+}
+
+/** The recipe's ingredients as a checklist: tick what you already have. Remembered per recipe on this device. */
+function GroceryList({ recipe: r, factor }: { recipe: Recipe; factor: number }) {
+  const [haveAll, setHaveAll] = useStored<Record<string, string[]>>("recipe-book-have", () => ({}));
+  const have = new Set(haveAll[r.id] ?? []);
+  const items = r.ingredients.map((ing) => scaleIngredient(ing, factor)).filter((i) => i.name.trim()).map((i) => ({ ...i, key: i.name.trim().toLowerCase() }));
+  const got = items.filter((i) => have.has(i.key)).length;
+  const save = (keys: string[]) => setHaveAll({ ...haveAll, [r.id]: keys });
+  const toggle = (k: string) => save(have.has(k) ? [...have].filter((x) => x !== k) : [...have, k]);
+
+  return (
+    <section className="rise-in mt-5 rounded-xl border border-line bg-raised p-4" aria-label="Grocery list">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="display text-base whitespace-nowrap">Grocery list</h3>
+        <p className="tabular text-sm text-ink-soft" aria-live="polite">{got} of {items.length} in the kitchen</p>
+      </div>
+      <div className="grow-strip mt-2.5" style={{ "--p": items.length ? got / items.length : 0 } as React.CSSProperties} />
+      <ul className="mt-3 grid gap-x-6 sm:grid-cols-2">
+        {items.map((i, n) => {
+          const done = have.has(i.key);
+          const id = `have-${r.id}-${n}`;
+          return (
+            <li key={n} className="flex items-center gap-3 border-b border-line/70 py-2">
+              <input id={id} type="checkbox" className="size-5 shrink-0 accent-leaf" checked={done} onChange={() => toggle(i.key)} />
+              <label htmlFor={id} className={cn("min-w-0 flex-1 cursor-pointer", done && "text-ink-faint")}>
+                <span className="strike" data-done={done}>
+                  <span className={cn("tabular font-semibold", !done && "text-accent")}>{[i.amount, i.unit].filter(Boolean).join(" ")}</span> {cleanName(i.name) || i.name}
+                </span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+      {got > 0 && (
+        <button type="button" className="mt-3 text-sm text-ink-soft underline hover:text-accent" onClick={() => save([])}>Uncheck all</button>
+      )}
+    </section>
   );
 }

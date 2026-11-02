@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { BookOpen, CalendarDays, ChefHat, ShoppingBasket, Download, FileUp, Heart, Link2, Monitor, Moon, Search, Sparkles, Sun, Trash2 } from "lucide-react";
 import { RecipeEditor, RecipeView, download, minutes } from "@/components/recipe";
@@ -59,24 +59,21 @@ export function App() {
 
   return (
     <div className="min-h-screen pb-16">
-      <header className="relative z-10 bg-band text-band-ink">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 pt-4 sm:px-6">
-          <div className="flex items-center gap-3 pb-3">
-            <img src="./favicon.svg" alt="" className="size-8 sm:size-10" />
-            <div>
-              <h1 className="sign-type text-xl leading-tight sm:text-2xl">Recipe Book</h1>
-              <p className="hidden text-sm text-band-ink/80 sm:block">Recipes, meal plan and shopping list, kept on your device.</p>
-            </div>
+      <header className="sticky top-0 z-20 border-b border-line bg-bar backdrop-blur-xl backdrop-saturate-150">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2.5 px-4 py-2.5 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <img src="./favicon.svg" alt="" className="size-8" />
+            <h1 className="display text-lg leading-tight">Recipe Book</h1>
           </div>
-          <div className="ml-auto flex items-center gap-2 pb-3">
+          <Tabs tabs={tabs} tab={tab} setTab={setTab} />
+          <div className="ml-auto flex items-center gap-2 md:ml-0">
             <UpdatePrompt />
             <ThemeButton />
           </div>
-          <Tabs tabs={tabs} tab={tab} setTab={setTab} />
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 pt-9 sm:px-6" style={{ viewTransitionName: "work" }}>
+      <main className="mx-auto max-w-6xl px-4 pt-6 sm:px-6" style={{ viewTransitionName: "work" }}>
         {tab === "import" && <ImportView onSave={(rs) => { save(rs); setOpenId(rs[0].id); setTab("library"); }} />}
         {tab === "library" && (
           <LibraryView
@@ -104,10 +101,30 @@ export function App() {
   );
 }
 
-/** Section tabs read like aisle signs; the active one is a yellow sign that drops down below the band. */
+/** Segmented section control; the pill glides to the active section. */
 function Tabs({ tabs, tab, setTab }: { tabs: readonly (readonly [Tab, string, string, typeof BookOpen])[]; tab: Tab; setTab: (t: Tab) => void }) {
+  const nav = useRef<HTMLElement>(null);
+  const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
+  useLayoutEffect(() => {
+    const place = () => {
+      const el = nav.current?.querySelector<HTMLElement>('[aria-current="page"]');
+      if (el) setPill({ x: el.offsetLeft, w: el.offsetWidth });
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    // Watch the buttons too: a label or font swap can resize them without resizing the nav.
+    if (nav.current) [nav.current, ...nav.current.querySelectorAll("button")].forEach((el) => ro.observe(el));
+    return () => ro.disconnect();
+  }, [tab]);
   return (
-    <nav className="-mx-1 flex w-full" aria-label="Sections">
+    <nav ref={nav} className="relative order-last flex w-full rounded-full bg-raised p-1 ring-1 ring-line md:order-none md:mx-auto md:w-auto" aria-label="Sections">
+      {pill && (
+        <span
+          aria-hidden
+          className="absolute top-1 bottom-1 left-0 rounded-full bg-card shadow-[0_1px_2px_rgb(16_24_40/0.08),0_4px_12px_-4px_rgb(16_24_40/0.18)] ring-1 ring-line transition-[translate,width] duration-500 ease-(--ease-out)"
+          style={{ translate: `${pill.x}px 0`, width: pill.w }}
+        />
+      )}
       {tabs.map(([id, label, short, Icon]) => {
         const on = tab === id;
         return (
@@ -118,14 +135,13 @@ function Tabs({ tabs, tab, setTab }: { tabs: readonly (readonly [Tab, string, st
             aria-label={label}
             onClick={() => setTab(id)}
             className={cn(
-              "sign-type relative flex h-14 flex-1 flex-col items-center justify-center gap-0.5 px-3 text-xs whitespace-nowrap text-band-ink/75 transition-colors hover:text-band-ink sm:h-12 sm:flex-none sm:flex-row sm:gap-2 sm:px-4 sm:text-sm",
-              on && "text-tag-ink hover:text-tag-ink",
+              "relative flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-sm font-medium sm:gap-2 sm:px-3 whitespace-nowrap text-ink-soft transition-colors hover:text-ink md:flex-none md:px-4",
+              on && "text-ink",
             )}
           >
-            {on && <span aria-hidden key={id} className="sign-drop absolute inset-x-0.5 top-1.5 -bottom-2.5 rounded-[4px] bg-tag shadow-[0_6px_10px_-6px_rgb(0_0_0/0.45)]" />}
-            <Icon className="relative size-4" />
-            <span className="relative sm:hidden">{short}</span>
-            <span className="relative hidden sm:inline">{label}</span>
+            <Icon className={cn("size-4 transition-colors", on && "text-accent")} />
+            <span className="sm:hidden">{short}</span>
+            <span className="hidden sm:inline">{label}</span>
           </button>
         );
       })}
@@ -147,7 +163,7 @@ function ThemeButton() {
       onClick={() => setChoice(next[0])}
       title={`Theme: ${label}. Click for ${next[1].toLowerCase()}.`}
       aria-label={`Theme: ${label}. Switch to ${next[1].toLowerCase()}.`}
-      className="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-semibold text-band-ink/85 shadow-[inset_0_0_0_1.5px_rgb(255_255_255/0.25)] transition-colors hover:text-band-ink hover:shadow-[inset_0_0_0_1.5px_rgb(255_255_255/0.6)]"
+      className="btn-soft inline-flex h-9 items-center gap-2 rounded-full px-3 text-sm font-medium"
     >
       <Icon key={choice} className="rise-in size-4" /> <span className="hidden md:inline">{choice === "system" ? "Auto" : label}</span>
     </button>
@@ -206,7 +222,7 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
             <input className="field pl-9" type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Recipe link (optional, saved as the source)" aria-label="Recipe link" />
           </div>
           <div className="flex gap-2">
-            <label className="btn-soft inline-flex h-11 cursor-pointer items-center gap-2 rounded-md px-4 text-sm font-semibold">
+            <label className="btn-soft inline-flex h-11 cursor-pointer items-center gap-2 rounded-lg px-4 text-sm font-semibold">
               <FileUp className="size-4" /> Open files
               <input
                 type="file"
@@ -216,14 +232,14 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
                 onChange={async (e) => { if (e.target.files) setDrafts(await readFiles(e.target.files)); e.target.value = ""; }}
               />
             </label>
-            <button type="button" disabled={busy} className="btn inline-flex h-11 items-center gap-2 rounded-md px-5 text-sm font-semibold disabled:opacity-50" onClick={run}>
+            <button type="button" disabled={busy} className="btn inline-flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-semibold disabled:opacity-50" onClick={run}>
               <Sparkles className="size-4" /> {busy ? "Reading…" : "Clean it up"}
             </button>
           </div>
         </div>
-        {error && <p role="alert" className="mt-3 rounded-md bg-alert/10 p-3 text-sm font-semibold text-alert">{error}</p>}
+        {error && <p role="alert" className="mt-3 rounded-lg bg-alert/10 p-3 text-sm font-semibold text-alert">{error}</p>}
         {!text && !drafts.length && (
-          <button type="button" className="mt-3 text-sm text-ink-soft underline hover:text-sign" onClick={() => setText(SAMPLE)}>
+          <button type="button" className="mt-3 text-sm text-ink-soft underline hover:text-accent" onClick={() => setText(SAMPLE)}>
             Try a sample recipe
           </button>
         )}
@@ -232,9 +248,9 @@ function ImportView({ onSave }: { onSave: (rs: Recipe[]) => void }) {
       {drafts.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="sign-type text-xl">Check it over ({drafts.length})</h2>
+            <h2 className="display text-xl">Check it over ({drafts.length})</h2>
             {drafts.length > 1 && (
-              <button type="button" className="btn inline-flex h-10 items-center rounded-md px-4 text-sm font-semibold" onClick={() => { onSave(drafts); setDrafts([]); setText(""); setUrl(""); }}>
+              <button type="button" className="btn inline-flex h-10 items-center rounded-lg px-4 text-sm font-semibold" onClick={() => { onSave(drafts); setDrafts([]); setText(""); setUrl(""); }}>
                 Save all {drafts.length}
               </button>
             )}
@@ -279,10 +295,10 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
 
   if (!library.length)
     return (
-      <div className="rounded-[6px] border-2 border-dashed border-line p-12 text-center">
+      <div className="rounded-xl border border-dashed border-line p-12 text-center">
         <ChefHat className="mx-auto size-10 text-ink-faint" />
         <p className="mt-3 text-ink-soft">No recipes yet.</p>
-        <button type="button" className="btn mt-4 inline-flex h-10 items-center rounded-md px-4 text-sm font-semibold" onClick={onImport}>Import your first recipe</button>
+        <button type="button" className="btn mt-4 inline-flex h-10 items-center rounded-lg px-4 text-sm font-semibold" onClick={onImport}>Import your first recipe</button>
       </div>
     );
 
@@ -303,10 +319,10 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
               <button
                 type="button"
                 onClick={() => { setOpenId(r.id); setEditing(false); }}
-                className={cn("w-full rounded-[6px] border-2 border-transparent px-3 py-2 text-left transition-colors hover:bg-card", open?.id === r.id && "border-sign bg-card")}
+                className={cn("w-full rounded-xl border border-transparent px-3 py-2 text-left transition-colors hover:bg-card", open?.id === r.id && "border-accent bg-card")}
               >
                 <span className="flex items-center gap-1.5 font-semibold">
-                  {r.favorite && <Heart className="size-3.5 shrink-0 fill-sign text-sign" />}
+                  {r.favorite && <Heart className="size-3.5 shrink-0 fill-accent text-accent" />}
                   <span className="truncate">{r.title}</span>
                 </span>
                 <span className="text-xs text-ink-faint">
@@ -344,12 +360,12 @@ function LibraryView({ library, setLibrary, save, onImport, openId, setOpenId, o
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" aria-pressed={on} onClick={onClick} className={cn("inline-flex items-center gap-1 rounded-[4px] border-2 border-line px-2.5 py-0.5 text-xs font-semibold text-ink-soft transition-colors hover:border-sign", on && "border-tag bg-tag text-tag-ink")}>
+    <button type="button" aria-pressed={on} onClick={onClick} className={cn("inline-flex items-center gap-1 rounded-lg border border-line px-2.5 py-0.5 text-xs font-semibold text-ink-soft transition-colors hover:border-accent", on && "border-accent-soft bg-accent-soft text-accent-strong")}>
       {children}
     </button>
   );
 }
 
 function SmallBtn({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
-  return <button type="button" onClick={onClick} className="btn-soft inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold">{children}</button>;
+  return <button type="button" onClick={onClick} className="btn-soft inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold">{children}</button>;
 }
