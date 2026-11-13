@@ -11,6 +11,7 @@ Import a recipe from anywhere, then plan your week and build the shopping list f
 <a href="https://github.com/Pixcel-Pirate/RecipeBook/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Pixcel-Pirate/RecipeBook?label=release&color=c9a227"></a>
 <a href="https://github.com/Pixcel-Pirate/RecipeBook/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/Pixcel-Pirate/RecipeBook/total?color=2ea043"></a>
 <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow"></a>
+<a href="https://buymeacoffee.com/saucie83g"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black"></a>
 <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D4?logo=windows&logoColor=white">
 <img alt="React" src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=white">
 <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white">
