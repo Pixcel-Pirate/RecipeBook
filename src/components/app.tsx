@@ -170,9 +170,11 @@ function ThemeButton() {
   );
 }
 
+const FILE_TYPES = /\.(json|txt|md|html?)$/i, MAX_FILE_BYTES = 5 * 1024 * 1024; // `accept` is only a hint to the picker
+
 async function readFiles(files: FileList) {
   const out: Recipe[] = [];
-  for (const f of Array.from(files)) out.push(...parseAny(await f.text()));
+  for (const f of Array.from(files)) if (FILE_TYPES.test(f.name) && f.size <= MAX_FILE_BYTES) out.push(...parseAny(await f.text()));
   return out;
 }
 
