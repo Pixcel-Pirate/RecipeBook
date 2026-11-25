@@ -1,4 +1,4 @@
-# Pre-launch checklist item 20: weekly scans for vulnerable dependencies (security fixes open PRs right away).
+# Pre-launch checklist item 20: Dependabot checks these dependencies weekly and opens update PRs.
 version: 2
 updates:
   - package-ecosystem: npm
